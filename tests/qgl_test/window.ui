@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="GL_TestWidget" name="GL_TestWidget" native="true">
+    <widget class="GL_TestWidget" name="testWidget" native="true">
      <property name="minimumSize">
       <size>
        <width>200</width>
@@ -144,7 +144,7 @@
   <connection>
    <sender>rotXSlider</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>GL_TestWidget</receiver>
+   <receiver>testWidget</receiver>
    <slot>setXRotation(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -160,7 +160,7 @@
   <connection>
    <sender>rotYSlider</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>GL_TestWidget</receiver>
+   <receiver>testWidget</receiver>
    <slot>setYRotation(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -176,7 +176,7 @@
   <connection>
    <sender>rotZSlider</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>GL_TestWidget</receiver>
+   <receiver>testWidget</receiver>
    <slot>setZRotation(int)</slot>
    <hints>
     <hint type="sourcelabel">

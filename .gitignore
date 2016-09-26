@@ -1,5 +1,5 @@
 
-# Created by https://www.gitignore.io/api/c++,opencv,qt
+# Created by https://www.gitignore.io/api/c++,opencv,qt,cmake
 
 ### C++ ###
 # Prerequisites
@@ -84,3 +84,14 @@ Makefile*
 
 # QtCtreator CMake
 CMakeLists.txt.user*
+
+
+
+### CMake ###
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Makefile
+cmake_install.cmake
+install_manifest.txt
+CTestTestfile.cmake

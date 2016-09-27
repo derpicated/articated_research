@@ -1,4 +1,6 @@
-project (test_preprocessing)
+project (preprocessing_test)
 
-add_executable(test_preprocessing main.cpp)
-target_link_libraries(test_preprocessing vision_methods)
+find_package( OpenCV REQUIRED )
+add_executable(preprocessing_test main.cpp)
+target_link_libraries(preprocessing_test vision_methods)
+target_link_libraries( preprocessing_test ${OpenCV_LIBS} )

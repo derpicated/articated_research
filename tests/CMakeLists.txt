@@ -1,1 +1,2 @@
 add_subdirectory(preprocessing)
+add_subdirectory(qgl_cv_test)

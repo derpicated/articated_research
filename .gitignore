@@ -1,6 +1,3 @@
-
-# Created by https://www.gitignore.io/api/c++,opencv,qt,cmake
-
 ### C++ ###
 # Prerequisites
 *.d
@@ -86,7 +83,6 @@ Makefile*
 CMakeLists.txt.user*
 
 
-
 ### CMake ###
 CMakeCache.txt
 CMakeFiles
@@ -95,3 +91,9 @@ Makefile
 cmake_install.cmake
 install_manifest.txt
 CTestTestfile.cmake
+
+
+### output folders ###
+# Build
+build/*
+docs/build*

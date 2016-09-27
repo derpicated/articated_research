@@ -1,13 +1,20 @@
-
 # Ubuntu 14.04 Trusty support
-sudo: required
 dist: trusty
+
+os:
+  - linux
+
+sudo: required
+
 language: cpp
 
 compiler:
   - gcc
   - clang
-os:
-  - linux
+
+notifications:
+    email:
+        on_success: never
+        on_failure: always
 
 script: echo "do make here"

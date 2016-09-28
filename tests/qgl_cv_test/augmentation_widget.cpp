@@ -3,16 +3,16 @@
 #include <QDebug>
 #include <QtOpenGL>
 
-#include "gl_testwidget.h"
+#include "augmentation_widget.h"
 
-augmentation_widget::augmentation_widget (/*unsigned int framerate,*/ QWidget* parent)
-: QOpenGLWidget (QGLFormat (QGL::SampleBuffers), parent)
+augmentation_widget::augmentation_widget (QWidget* parent)
+: QOpenGLWidget (parent)
 , cap (0)
 , xRot (0)
 , yRot (0)
 , zRot (0)
 , frameTimer (new QTimer (this)) {
-    connect (frameTimer, SIGNAL (timeout ()), this, SLOT (updateGL ()));
+    connect (frameTimer, SIGNAL (timeout ()), this, SLOT (update ()));
     frameTimer->setInterval (1 / framerate);
     frameTimer->start ();
 }
@@ -32,6 +32,10 @@ QSize augmentation_widget::sizeHint () const {
 static void qNormalizeAngle (int& angle) {
     while (angle < 0) angle += 360 * 16;
     while (angle > 360) angle -= 360 * 16;
+}
+
+void augmentation_widget::update () {
+    paintGL ();
 }
 
 void augmentation_widget::setXRotation (int angle) {
@@ -59,7 +63,7 @@ void augmentation_widget::setZRotation (int angle) {
 }
 
 void augmentation_widget::initializeGL () {
-    qglClearColor (Qt::black);
+    // qglClearColor (Qt::black);
 
     glEnable (GL_DEPTH_TEST);
     glEnable (GL_CULL_FACE);
@@ -140,7 +144,7 @@ void augmentation_widget::draw () {
 
     // draw triangle
     glBegin (GL_QUADS);
-    qglColor (Qt::red);
+    // qglColor (Qt::red);
     glNormal3f (0, 0, -1);
     glVertex3f (-1, -1, 0);
     glVertex3f (-1, 1, 0);

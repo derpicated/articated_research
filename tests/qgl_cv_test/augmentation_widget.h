@@ -3,12 +3,10 @@
 #ifndef AUGMENTATION_WIDGET_H
 #define AUGMENTATION_WIDGET_H
 
+#include <QOpenGLFunctions>
 #include <QOpenGLWidget>
 #include <QTimer>
 #include <opencv2/opencv.hpp>
-
-QMatrix4x4 m_projection;
-
 
 class augmentation_widget : public QOpenGLWidget, protected QOpenGLFunctions {
     Q_OBJECT
@@ -25,6 +23,7 @@ class augmentation_widget : public QOpenGLWidget, protected QOpenGLFunctions {
 
     public slots:
     // slots for xyz-rotation slider
+    void update ();
     void setXRotation (int angle);
     void setYRotation (int angle);
     void setZRotation (int angle);

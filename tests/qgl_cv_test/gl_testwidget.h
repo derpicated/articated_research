@@ -4,12 +4,13 @@
 #define GL_TestWidget_H
 
 #include <QGLWidget>
+#include <QTimer>
 #include <opencv2/opencv.hpp>
 
 class GL_TestWidget : public QGLWidget {
     Q_OBJECT
     public:
-    explicit GL_TestWidget (QWidget* parent = 0);
+    explicit GL_TestWidget (/*unsigned int framerate,*/ QWidget* parent = 0);
     ~GL_TestWidget ();
     signals:
 
@@ -38,10 +39,11 @@ class GL_TestWidget : public QGLWidget {
     private:
     void draw ();
 
+    unsigned int framerate = 30;
     int xRot;
     int yRot;
     int zRot;
-
+    QTimer* frameTimer;
     QPoint lastPos;
     GLuint texture_background;
     cv::VideoCapture cap;

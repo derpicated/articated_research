@@ -1,20 +1,24 @@
 // GL_TestWidget.cpp
 
 #include <QDebug>
-#include <QWidget>
 #include <QtOpenGL>
 
 #include "gl_testwidget.h"
 
-GL_TestWidget::GL_TestWidget (QWidget* parent)
+GL_TestWidget::GL_TestWidget (/*unsigned int framerate,*/ QWidget* parent)
 : QGLWidget (QGLFormat (QGL::SampleBuffers), parent)
-, cap (0) {
-    xRot = 0;
-    yRot = 0;
-    zRot = 0;
+, cap (0)
+, xRot (0)
+, yRot (0)
+, zRot (0)
+, frameTimer (new QTimer (this)) {
+    connect (frameTimer, SIGNAL (timeout ()), this, SLOT (updateGL ()));
+    frameTimer->setInterval (1 / framerate);
+    frameTimer->start ();
 }
 
 GL_TestWidget::~GL_TestWidget () {
+    delete frameTimer;
 }
 
 QSize GL_TestWidget::minimumSizeHint () const {
@@ -35,7 +39,6 @@ void GL_TestWidget::setXRotation (int angle) {
     if (angle != xRot) {
         xRot = angle;
         emit xRotationChanged (angle);
-        updateGL ();
     }
 }
 
@@ -44,7 +47,6 @@ void GL_TestWidget::setYRotation (int angle) {
     if (angle != yRot) {
         yRot = angle;
         emit yRotationChanged (angle);
-        updateGL ();
     }
 }
 
@@ -53,7 +55,6 @@ void GL_TestWidget::setZRotation (int angle) {
     if (angle != zRot) {
         zRot = angle;
         emit zRotationChanged (angle);
-        updateGL ();
     }
 }
 

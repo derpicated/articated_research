@@ -1,25 +1,24 @@
 // gl_testwidget.h
 
-#ifndef GL_TestWidget_H
-#define GL_TestWidget_H
+#ifndef AUGMENTATION_WIDGET_H
+#define AUGMENTATION_WIDGET_H
 
-#include <QGLWidget>
+#include <QOpenGLWidget>
 #include <QTimer>
 #include <opencv2/opencv.hpp>
 
-class GL_TestWidget : public QGLWidget {
+QMatrix4x4 m_projection;
+
+
+class augmentation_widget : public QOpenGLWidget, protected QOpenGLFunctions {
     Q_OBJECT
     public:
-    explicit GL_TestWidget (/*unsigned int framerate,*/ QWidget* parent = 0);
-    ~GL_TestWidget ();
-    signals:
+    augmentation_widget (QWidget* parent = 0);
+    ~augmentation_widget ();
 
-    public slots:
-
-    protected:
     void initializeGL ();
+    void resizeGL (int w, int h);
     void paintGL ();
-    void resizeGL (int width, int height);
 
     QSize minimumSizeHint () const;
     QSize sizeHint () const;
@@ -49,4 +48,4 @@ class GL_TestWidget : public QGLWidget {
     cv::VideoCapture cap;
 };
 
-#endif // GL_TestWidget_H
+#endif // AUGMENTATION_WIDGET_H

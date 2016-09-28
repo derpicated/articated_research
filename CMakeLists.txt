@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.11)
 
 set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -17,7 +17,7 @@ set(VISION_METHODS_SRC
 )
 add_library( vision_methods SHARED ${VISION_METHODS_SRC} ${VISION_METHODS_INC} )
 target_link_libraries( vision_methods ${OpenCV_LIBS} )
-#target_include_directories ( vision_methods PUBLIC ${INCLUDE_DIR} PRIVATE ${SRC_DIR} )
 target_include_directories ( vision_methods PUBLIC ${INCLUDE_DIR} )
 
+# sub projects
 add_subdirectory(tests)

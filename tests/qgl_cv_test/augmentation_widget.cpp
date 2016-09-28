@@ -1,12 +1,12 @@
-// GL_TestWidget.cpp
+// augmentation_widget.cpp
 
 #include <QDebug>
 #include <QtOpenGL>
 
 #include "gl_testwidget.h"
 
-GL_TestWidget::GL_TestWidget (/*unsigned int framerate,*/ QWidget* parent)
-: QGLWidget (QGLFormat (QGL::SampleBuffers), parent)
+augmentation_widget::augmentation_widget (/*unsigned int framerate,*/ QWidget* parent)
+: QOpenGLWidget (QGLFormat (QGL::SampleBuffers), parent)
 , cap (0)
 , xRot (0)
 , yRot (0)
@@ -17,15 +17,15 @@ GL_TestWidget::GL_TestWidget (/*unsigned int framerate,*/ QWidget* parent)
     frameTimer->start ();
 }
 
-GL_TestWidget::~GL_TestWidget () {
+augmentation_widget::~augmentation_widget () {
     delete frameTimer;
 }
 
-QSize GL_TestWidget::minimumSizeHint () const {
+QSize augmentation_widget::minimumSizeHint () const {
     return QSize (50, 50);
 }
 
-QSize GL_TestWidget::sizeHint () const {
+QSize augmentation_widget::sizeHint () const {
     return QSize (400, 400);
 }
 
@@ -34,7 +34,7 @@ static void qNormalizeAngle (int& angle) {
     while (angle > 360) angle -= 360 * 16;
 }
 
-void GL_TestWidget::setXRotation (int angle) {
+void augmentation_widget::setXRotation (int angle) {
     qNormalizeAngle (angle);
     if (angle != xRot) {
         xRot = angle;
@@ -42,7 +42,7 @@ void GL_TestWidget::setXRotation (int angle) {
     }
 }
 
-void GL_TestWidget::setYRotation (int angle) {
+void augmentation_widget::setYRotation (int angle) {
     qNormalizeAngle (angle);
     if (angle != yRot) {
         yRot = angle;
@@ -50,7 +50,7 @@ void GL_TestWidget::setYRotation (int angle) {
     }
 }
 
-void GL_TestWidget::setZRotation (int angle) {
+void augmentation_widget::setZRotation (int angle) {
     qNormalizeAngle (angle);
     if (angle != zRot) {
         zRot = angle;
@@ -58,7 +58,7 @@ void GL_TestWidget::setZRotation (int angle) {
     }
 }
 
-void GL_TestWidget::initializeGL () {
+void augmentation_widget::initializeGL () {
     qglClearColor (Qt::black);
 
     glEnable (GL_DEPTH_TEST);
@@ -77,7 +77,7 @@ void GL_TestWidget::initializeGL () {
     glMatrixMode (GL_MODELVIEW)*/
 }
 
-void GL_TestWidget::paintGL () {
+void augmentation_widget::paintGL () {
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity ();
     glTranslatef (0.0, 0.0, -10.0);
@@ -87,7 +87,7 @@ void GL_TestWidget::paintGL () {
     draw ();
 }
 
-void GL_TestWidget::resizeGL (int width, int height) {
+void augmentation_widget::resizeGL (int width, int height) {
     int side = qMin (width, height);
     glViewport ((width - side) / 2, (height - side) / 2, side, side);
 
@@ -101,7 +101,7 @@ void GL_TestWidget::resizeGL (int width, int height) {
     glMatrixMode (GL_MODELVIEW);
 }
 
-void GL_TestWidget::draw () {
+void augmentation_widget::draw () {
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity ();
 

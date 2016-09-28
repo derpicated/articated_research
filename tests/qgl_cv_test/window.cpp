@@ -3,7 +3,7 @@
 #include "window.h"
 #include "ui_window.h"
 
-#include "gl_testwidget.h"
+#include "augmentation_widget.h"
 
 Window::Window (QWidget* parent)
 : QWidget (parent)

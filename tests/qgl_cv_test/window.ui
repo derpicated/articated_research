@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="GL_TestWidget" name="testWidget" native="true">
+    <widget class="augmentation_widget" name="testWidget" native="true">
      <property name="minimumSize">
       <size>
        <width>200</width>
@@ -128,9 +128,9 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>GL_TestWidget</class>
+   <class>augmentation_widget</class>
    <extends>QWidget</extends>
-   <header>gl_testwidget.h</header>
+   <header>augmentation_widget.h</header>
    <container>1</container>
    <slots>
     <slot>setXRotation(int)</slot>

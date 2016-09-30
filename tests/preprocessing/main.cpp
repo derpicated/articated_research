@@ -4,6 +4,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/opencv.hpp>
+#include <string>
 #include <thread>
 /**
  * Test the vision method preprocessing
@@ -20,53 +21,58 @@ int main (int argc, char const* argv[]) {
     }
     cv::Mat image_in, image_out;
     vision_methods preprocessing_test;
-    std::string file = argv[2];
     cv::VideoCapture cap;
-    cv::namedWindow ("input", cv::WINDOW_AUTOSIZE);
-    const int fps = 30;
-    std::clock_t start_time;
-    bool loop = true;
-    switch ((*argv[1])) {
-        case 'c':
-            if (!cap.open (std::stoi (file))) {
-                std::cout << "camera could not be opened" << std::endl;
-                exit (EXIT_FAILURE);
-            }
-        case 'v':
-            if (!cap.open ((file))) {
-                std::cout << "video could not be opened" << std::endl;
-                exit (EXIT_FAILURE);
-            }
-    }
-
-    while (loop) {
-        start_time = std::clock ();
-        switch ((*argv[1])) {
-            case 'i':
-                image_in = cv::imread (file, CV_LOAD_IMAGE_COLOR);
-
-                if (!image_in.data) {
-                    std::cout << "could not open or find the image" << std::endl;
-                    exit (EXIT_FAILURE);
-                }
-                loop = false;
-                break;
-            case 'c': cap >> image_in; break;
-            case 'v': cap >> image_in; break;
-            default:
-                std::cout << "not suported" << std::endl;
-                exit (EXIT_FAILURE);
+    // std::clock_t start_time;
+    std::chrono::high_resolution_clock::time_point start_time;
+    bool loop              = true;
+    const std::string type = argv[1];
+    const std::string file = argv[2];
+    const int fps          = 30;
+    // open the file
+    if (type == "c") {
+        if (!cap.open (std::stoi (file))) {
+            std::cout << "camera could not be opened" << std::endl;
+            exit (EXIT_FAILURE);
         }
-        image_out = preprocessing_test.preprocessing (image_in);
-        if (!image_in.empty ()) {
+    } else if (type == "v") {
+        if (!cap.open ((file))) {
+            std::cout << "video could not be opened" << std::endl;
+            exit (EXIT_FAILURE);
+        }
+    }
+    // loop if necessary
+    while (loop) {
+        if (type == "i") {
+            image_in = cv::imread (file, CV_LOAD_IMAGE_COLOR);
 
+            if (!image_in.data) {
+                std::cout << "could not open or find the image" << std::endl;
+                exit (EXIT_FAILURE);
+            }
+            loop = false;
+        } else if (type == "c") {
+            cap >> image_in;
+        } else if (type == "v") {
+            cap >> image_in;
+        } else {
+            std::cout << "not suported" << std::endl;
+            exit (EXIT_FAILURE);
+        }
+        start_time    = std::chrono::high_resolution_clock::now ();
+        image_out     = preprocessing_test.preprocessing (image_in);
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds> (
+        std::chrono::high_resolution_clock::now () -
+        start_time).count ();
+
+        std::cout << "preprocessing took " << duration << " µs; ("
+                  << duration / 1000 << " ms )" << std::endl;
+        if (!image_in.empty ()) {
             cv::imshow ("input", image_in);
         }
         if (!image_in.empty ()) {
             cv::imshow ("output", image_out);
             cv::moveWindow ("output", image_out.size ().width, 0);
         }
-
         cv::waitKey (1);
         std::this_thread::sleep_for (
         std::chrono::milliseconds (int(float(1000 * (1 / fps)))));

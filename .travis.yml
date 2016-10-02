@@ -17,4 +17,8 @@ notifications:
         on_success: never
         on_failure: always
 
-script: echo "do make here"
+install:
+    - libopencv-dev
+
+script:
+    - mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && cmake --build . --target all

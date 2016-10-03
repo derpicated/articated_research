@@ -18,6 +18,10 @@ notifications:
 before_install:
     - sudo apt-get -qq update
     - sudo apt-get install -y libopencv-dev
+    #install QT5
+    - wget http://download.qt.io/official_releases/qt/5.7/5.7.0/qt-opensource-linux-x64-5.7.0.run
+    - chmod +x qt-opensource-linux-x64-5.7.0.run
+    - ./qt-opensource-linux-x64-5.7.0.run
 
 script:
     - mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && cmake --build . --target all

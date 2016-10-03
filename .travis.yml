@@ -16,15 +16,14 @@ notifications:
         on_failure: always
 
 before_install:
-    - sudo add-apt-repository --yes ppa:beineri/opt-qt551-trusty # for qt5.5
+    - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
     - sudo apt-get -qq update
-    - sudo apt-get install -qq libopencv-dev
+    - sudo apt-get install -qq qt5-qmake qtbase5-dev qtdeclarative5-dev libqt5webkit5-dev libsqlite3-dev
 
 install:
   - sudo apt-get -y install qt55[QTPACKAGE]
 
 script:
-    - source /opt/qt55/bin/qt55-env.sh
-    - /opt/qt55/bin/qmake
-    - make
+    - qmake -qt=qt5 -v
+    - qmake -qt=qt5
     - mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && cmake --build . --target all

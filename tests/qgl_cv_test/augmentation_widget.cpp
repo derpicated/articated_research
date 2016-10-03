@@ -63,8 +63,9 @@ void augmentation_widget::setZRotation (int angle) {
 }
 
 void augmentation_widget::initializeGL () {
-    // qglClearColor (Qt::black);
+    initializeOpenGLFunctions ();
 
+    glClearColor (0.1f, 0.1f, 0.1f, 1.0f);
     glEnable (GL_DEPTH_TEST);
     glEnable (GL_CULL_FACE);
     glShadeModel (GL_SMOOTH);

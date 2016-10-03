@@ -21,7 +21,7 @@ class vision_methods {
      * @param  image_in image in
      * @return image out
      */
-    cv::Mat preprocessing (const cv::Mat image_in);
+    cv::Mat preprocessing (const cv::Mat& image_in);
 };
 
 

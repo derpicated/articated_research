@@ -16,12 +16,10 @@ notifications:
         on_failure: always
 
 before_install:
+    - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa # for qt5
     - sudo apt-get -qq update
-    - sudo apt-get install -y libopencv-dev
-    #install QT5
-    - wget http://download.qt.io/official_releases/qt/5.7/5.7.0/qt-opensource-linux-x64-5.7.0.run
-    - chmod +x qt-opensource-linux-x64-5.7.0.run
-    - ./qt-opensource-linux-x64-5.7.0.run --script qt-installer-noninteractive.qs
+    - sudo apt-get install -qq libopencv-dev
+    - sudo apt-get install -qq qt5-qmake qtbase5-dev qtdeclarative5-dev libqt5webkit5-dev libsqlite3-dev
 
 script:
     - mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && cmake --build . --target all

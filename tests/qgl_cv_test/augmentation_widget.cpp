@@ -1,7 +1,6 @@
 // augmentation_widget.cpp
 
 #include <QDebug>
-#include <QtOpenGL>
 
 #include "augmentation_widget.h"
 

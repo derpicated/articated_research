@@ -4,8 +4,6 @@ dist: trusty
 os:
   - linux
 
-sudo: required
-
 language: cpp
 
 compiler:
@@ -17,4 +15,9 @@ notifications:
         on_success: never
         on_failure: always
 
-script: echo "do make here"
+before_install:
+    - sudo apt-get -qq update
+    - sudo apt-get install -y libopencv-dev
+
+script:
+    - mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && cmake --build . --target all

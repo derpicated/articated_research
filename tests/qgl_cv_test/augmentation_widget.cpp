@@ -110,10 +110,9 @@ void augmentation_widget::paintGL () {
     glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB, frame.cols, frame.rows, 0, GL_BGR,
     GL_UNSIGNED_BYTE, frame.ptr ());
 
-    glMatrixMode (GL_MODELVIEW);
+    // glMatrixMode (GL_MODELVIEW);
 
     // draw background
-    // glPushMatrix ();
     glTranslatef (0.0, 0.0, -10.0);
 
     glBegin (GL_QUADS);
@@ -127,6 +126,12 @@ void augmentation_widget::paintGL () {
     glVertex3f (-4.0, 3.0, 0.0);
     glEnd ();
     // glPopMatrix ();
+
+    glPushMatrix ();
+    glRotatef (_xRot, 1, 0, 0);
+    glRotatef (_yRot, 0, 1, 0);
+    glRotatef (_zRot, 0, 0, 1);
+
     glBegin (GL_QUADS);
     glNormal3f (0, 0, -1);
     glVertex3f (-1, -1, 0);
@@ -159,4 +164,5 @@ void augmentation_widget::paintGL () {
     glVertex3f (-1, -1, 0);
     glVertex3f (0, 0, 1.2);
     glEnd ();
+    glPopMatrix ();
 }

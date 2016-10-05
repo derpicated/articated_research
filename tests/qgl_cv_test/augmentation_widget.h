@@ -22,8 +22,6 @@ class augmentation_widget : public QOpenGLWidget, protected QOpenGLFunctions {
     QSize sizeHint () const;
 
     public slots:
-    // slots for xyz-rotation slider
-    void update ();
     void setXRotation (int angle);
     void setYRotation (int angle);
     void setZRotation (int angle);
@@ -35,16 +33,14 @@ class augmentation_widget : public QOpenGLWidget, protected QOpenGLFunctions {
     void zRotationChanged (int angle);
 
     private:
-    void draw ();
-
-    unsigned int framerate = 30;
-    int xRot;
-    int yRot;
-    int zRot;
-    QTimer* frameTimer;
-    QPoint lastPos;
-    GLuint texture_background;
-    cv::VideoCapture cap;
+    unsigned int _framerate = 30;
+    int _xRot;
+    int _yRot;
+    int _zRot;
+    QTimer* _frame_timer;
+    QPoint _lastPos;
+    GLuint _texture_background;
+    cv::VideoCapture _cap;
 };
 
 #endif // AUGMENTATION_WIDGET_H

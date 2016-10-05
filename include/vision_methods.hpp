@@ -15,6 +15,12 @@ class vision_methods {
     virtual ~vision_methods ();
 
     /**
+     * get image from a source
+     * @return returns a image from the source
+     */
+    cv::Mat acquisition ();
+
+    /**
      * preprocess image
      * - greyscale
      * - blur to remove noise
@@ -22,6 +28,17 @@ class vision_methods {
      * @return image out
      */
     cv::Mat preprocessing (const cv::Mat& image_in);
+
+    /**
+     * segment image
+     * remove background and transform to binary image.
+     * @param  image_in image to be segmented
+     * @return          segmented image
+     */
+    cv::Mat segmentation (const cv::Mat& image_in);
+
+    // structure? feature_extraction(const cv::Mat&image_in);
+    // map? classification (const ...);
 };
 
 

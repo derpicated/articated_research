@@ -12,7 +12,7 @@ class vision_methods {
 
     public:
     vision_methods ();
-    virtual ~vision_methods ();
+    ~vision_methods ();
 
     /**
      * get image from a source

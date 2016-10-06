@@ -10,6 +10,11 @@ Window::Window (QWidget* parent)
 , ui (new Ui::Window) {
     ui->setupUi (this);
 
+    connect (ui->posXSlider, SIGNAL (valueChanged (int)), ui->testWidget,
+    SLOT (setXPosition (int)));
+    connect (ui->posYSlider, SIGNAL (valueChanged (int)), ui->testWidget,
+    SLOT (setYPosition (int)));
+
     connect (ui->testWidget, SIGNAL (xRotationChanged (int)), ui->rotXSlider,
     SLOT (setValue (int)));
     connect (ui->testWidget, SIGNAL (yRotationChanged (int)), ui->rotYSlider,

@@ -7,9 +7,11 @@
 augmentation_widget::augmentation_widget (QWidget* parent)
 : QOpenGLWidget (parent)
 , _cap (0)
-, _xRot (0)
-, _yRot (0)
-, _zRot (0)
+, _x_pos (0.0f)
+, _y_pos (0.0f)
+, _x_rot (0)
+, _y_rot (0)
+, _z_rot (0)
 , _frame_timer (new QTimer (this)) {
     connect (_frame_timer, SIGNAL (timeout ()), this, SLOT (update ()));
     _frame_timer->setInterval (1000 / _framerate);
@@ -25,7 +27,7 @@ QSize augmentation_widget::minimumSizeHint () const {
 }
 
 QSize augmentation_widget::sizeHint () const {
-    return QSize (800, 800);
+    return QSize (500, 500);
 }
 
 static void qNormalizeAngle (int& angle) {
@@ -33,26 +35,36 @@ static void qNormalizeAngle (int& angle) {
     while (angle > 360) angle -= 360;
 }
 
+void augmentation_widget::setXPosition (int location) {
+    _x_pos = (float)location / 100;
+    // emit xPositionChanged (location);
+}
+
+void augmentation_widget::setYPosition (int location) {
+    _y_pos = (float)location / 100;
+    // emit yPositionChanged (location);
+}
+
 void augmentation_widget::setXRotation (int angle) {
     qNormalizeAngle (angle);
-    if (angle != _xRot) {
-        _xRot = angle;
+    if (angle != _x_rot) {
+        _x_rot = angle;
         emit xRotationChanged (angle);
     }
 }
 
 void augmentation_widget::setYRotation (int angle) {
     qNormalizeAngle (angle);
-    if (angle != _yRot) {
-        _yRot = angle;
+    if (angle != _y_rot) {
+        _y_rot = angle;
         emit yRotationChanged (angle);
     }
 }
 
 void augmentation_widget::setZRotation (int angle) {
     qNormalizeAngle (angle);
-    if (angle != _zRot) {
-        _zRot = angle;
+    if (angle != _z_rot) {
+        _z_rot = angle;
         emit zRotationChanged (angle);
     }
 }
@@ -128,9 +140,10 @@ void augmentation_widget::paintGL () {
     // glPopMatrix ();
 
     glPushMatrix ();
-    glRotatef (_xRot, 1, 0, 0);
-    glRotatef (_yRot, 0, 1, 0);
-    glRotatef (_zRot, 0, 0, 1);
+    glTranslatef (_x_pos, _y_pos, 0);
+    glRotatef (_x_rot, 1, 0, 0);
+    glRotatef (_y_rot, 0, 1, 0);
+    glRotatef (_z_rot, 0, 0, 1);
 
     glBegin (GL_QUADS);
     glNormal3f (0, 0, -1);

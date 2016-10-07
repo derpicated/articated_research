@@ -15,12 +15,6 @@ class vision_methods {
     ~vision_methods ();
 
     /**
-     * get image from a source
-     * @return returns a image from the source
-     */
-    cv::Mat acquisition ();
-
-    /**
      * preprocess image
      * - greyscale
      * - blur to remove noise

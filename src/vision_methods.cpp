@@ -7,11 +7,6 @@ vision_methods::vision_methods () {
 vision_methods::~vision_methods () {
 }
 
-cv::Mat vision_methods::acquisition () {
-    cv::Mat image;
-    return image;
-}
-
 cv::Mat vision_methods::preprocessing (const cv::Mat& image_in) {
     cv::Mat image_out;
     cvtColor (image_in, image_out, CV_BGR2GRAY);

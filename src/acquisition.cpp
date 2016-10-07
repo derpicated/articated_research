@@ -1,4 +1,5 @@
 #include "acquisition.hpp"
+#include <fstream>
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -6,13 +7,14 @@
 #include <sstream>
 #include <unistd.h>
 
-acquisition::acquisition (const int device)
-: type (type_camera) {
+acquisition::acquisition () {
+}
+
+acquisition::acquisition (const int device) {
     source (device);
 }
 
-acquisition::acquisition (const std::string& filename)
-: type (type_camera) {
+acquisition::acquisition (const std::string& filename) {
     source (filename);
 }
 
@@ -22,16 +24,23 @@ acquisition::~acquisition () {
 void acquisition::source (const int device) {
     if (!(device < cam_count ())) {
         throw std::range_error ("camera ID not available");
+    } else if (!(_capture.open (device))) {
+        throw std::ifstream::failure ("camera could not be opened");
     }
-    _device = device;
 }
 
 void acquisition::source (const std::string& filename) {
-    _file = filename;
+    if (!(_capture.open (filename))) {
+        throw std::ifstream::failure ("file could not be opened");
+    }
 }
 
 cv::Mat acquisition::capture () {
+    if (!(_capture.isOpened ())) {
+        throw std::runtime_error ("no open capture file/device");
+    }
     cv::Mat image;
+    _capture >> image;
     return image;
 }
 

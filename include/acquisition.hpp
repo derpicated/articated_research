@@ -1,19 +1,11 @@
 #ifndef ACQUISITION_HPP
 #define ACQUISITION_HPP
 
-#include <opencv/cv.h>
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
 #include <opencv2/opencv.hpp>
 
 class acquisition {
     private:
-    /* data */
-    const bool type_camera = true;
-    const bool type_file   = false;
-    bool type              = type_camera;
-    std::string _file      = "";
-    int _device            = -1;
+    cv::VideoCapture _capture = 0;
 
     /**
      * handle opencv errors
@@ -33,13 +25,33 @@ class acquisition {
     void* userdata);
 
     public:
-    acquisition (const int device = 0);
+    acquisition ();
+    acquisition (const int device);
     acquisition (const std::string& filename);
     ~acquisition ();
-    void source (const int device = 0);
+
+    /**
+     * set source of capture data
+     * @param device is the camera identifier
+     */
+    void source (const int device = -1);
+
+    /**
+     * set source of capture data
+     * @param filename the to be captured file
+     */
     void source (const std::string& filename);
+
+    /**
+     * capture data
+     * @return return a captured frame
+     */
     cv::Mat capture ();
 
+    /**
+     * get camera count
+     * @return number of cameras connected
+     */
     int cam_count ();
 };
 

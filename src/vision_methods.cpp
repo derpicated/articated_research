@@ -1,5 +1,5 @@
-
 #include "vision_methods.hpp"
+#include <opencv2/opencv.hpp>
 
 vision_methods::vision_methods () {
 }

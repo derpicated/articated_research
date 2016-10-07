@@ -1,7 +1,7 @@
 #ifndef VISION_METHODS_HPP
 #define VISION_METHODS_HPP
 
-#include <opencv/cv.h>
+#include <opencv2/opencv.hpp>
 
 class vision_methods {
     private:

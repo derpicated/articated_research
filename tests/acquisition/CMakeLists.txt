@@ -1,9 +1,9 @@
-project(acquisition_test)
+project(acquisition_demo)
 
 find_package(OpenCV REQUIRED)
-add_executable(acquisition_test main.cpp)
+add_executable(acquisition_demo demo.cpp)
 target_link_libraries(
-    acquisition_test
+    acquisition_demo
         acquisition
         ${OpenCV_LIBS}
 )

@@ -27,6 +27,7 @@ std::vector<cv::KeyPoint>& key_points) {
     blob_detector_params.minDistBetweenBlobs = 5.0; // 50?
     cv::SimpleBlobDetector blob_detector (blob_detector_params);
 
+    // segmentation
     cv::Canny (image_in, image_out, 255, 100);
     blob_detector.detect (image_out, key_points);
 

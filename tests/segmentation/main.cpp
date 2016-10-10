@@ -23,39 +23,40 @@ int main (int argc, char const* argv[]) {
     cv::VideoCapture cap;
     const std::string type = argv[1];
     const std::string file = argv[2];
-
-    if (type == "c") {
-        if (!cap.open (std::stoi (file))) {
-            std::cout << "camera could not be opened" << std::endl;
-            exit (EXIT_FAILURE);
-        }
-    } else if (type == "v") {
-        if (!cap.open ((file))) {
-            std::cout << "video could not be opened" << std::endl;
-            exit (EXIT_FAILURE);
-        }
-    } else if (type == "i") {
-        ;
-    } else {
-        std::cout << "not suported" << std::endl;
-        exit (EXIT_FAILURE);
-    }
-
     cv::Mat image_in, image_tmp, image_out;
     vision_methods segmentation_test;
     std::chrono::high_resolution_clock::time_point start_time;
-    const int fps         = 30;
-    double total_duration = 0;
+    const int fps               = 30;
+    unsigned int max_blob_count = 0;
+    double total_duration       = 0;
     std::vector<cv::KeyPoint> key_points;
-    for (int n = 100; n > 0; --n) {
-        if (type == "i") {
+
+    switch (type[0]) {
+        case 'c':
+            if (!cap.open (std::stoi (file))) {
+                std::cout << "camera could not be opened" << std::endl;
+                exit (EXIT_FAILURE);
+            }
+            break;
+        case 'v':
+            if (!cap.open ((file))) {
+                std::cout << "video could not be opened" << std::endl;
+                exit (EXIT_FAILURE);
+            }
+            break;
+        case 'i':
             image_in = cv::imread (file, CV_LOAD_IMAGE_COLOR);
 
             if (!image_in.data) {
                 std::cout << "could not open or find the image" << std::endl;
                 exit (EXIT_FAILURE);
             }
-        } else { // type == "c" || type == "v"
+            break;
+        default: std::cout << "not suported" << std::endl; exit (EXIT_FAILURE);
+    }
+
+    for (int n = 100; n > 0; --n) {
+        if (type == "c" || type == "v") {
             cap >> image_in;
         }
 
@@ -77,12 +78,16 @@ int main (int argc, char const* argv[]) {
             cv::moveWindow ("output", image_out.size ().width, 0);
         }
         cv::waitKey (1);
-        std::this_thread::sleep_for (std::chrono::milliseconds (int(float(1000 / fps))));
+        std::this_thread::sleep_for (std::chrono::milliseconds (1000 / fps));
 
-        std::cout << "found " << key_points.size () << " keypoints";
+        std::cout << "found " << key_points.size () << " keypoints\r" << std::flush;
+        if (max_blob_count < key_points.size ()) {
+            max_blob_count = key_points.size ();
+        }
     }
 
     double average_duration = total_duration / 100;
+    std::cout << "found a maximum of " << max_blob_count << " blobs" << std::endl;
     std::cout << "segmentation on average took " << average_duration << " µs; ("
               << std::round (average_duration / 1000) << " ms)" << std::endl;
     return EXIT_SUCCESS;

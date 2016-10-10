@@ -50,6 +50,8 @@ class acquisition {
 
     /**
      * get camera count
+     * This moment this will just return the max check value
+     * (10). This is because opencv is not working correctly.
      * @return number of cameras connected
      */
     int cam_count ();

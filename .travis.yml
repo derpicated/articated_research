@@ -10,6 +10,11 @@ compiler:
   - gcc
   - clang
 
+cache:
+  directories:
+  - .autoconf
+  - $HOME/.m2
+
 notifications:
     email:
         on_success: never
@@ -28,8 +33,9 @@ before_script:
     - mkdir build
     - cd build
     - cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/usr/local ..
-    - make
+    - make -j 2 # travis has 2 cores, so let's use them
     - sudo make install
+    - cd ../../
 
 script:
     - mkdir build

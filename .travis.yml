@@ -12,8 +12,7 @@ compiler:
 
 cache:
   directories:
-  - .autoconf
-  - $HOME/.m2
+  - opencv
 
 notifications:
     email:

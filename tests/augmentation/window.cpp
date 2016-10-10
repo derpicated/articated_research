@@ -18,11 +18,11 @@ Window::Window (QWidget* parent)
     SLOT (posYSlider_valueChanged (int)));
 
     connect (ui->rotXSlider, SIGNAL (valueChanged (int)), this,
-    SLOT (rotYSlider_valueChanged (int)));
+    SLOT (rotXSlider_valueChanged (int)));
     connect (ui->rotYSlider, SIGNAL (valueChanged (int)), this,
     SLOT (rotYSlider_valueChanged (int)));
     connect (ui->rotZSlider, SIGNAL (valueChanged (int)), this,
-    SLOT (rotYSlider_valueChanged (int)));
+    SLOT (rotZSlider_valueChanged (int)));
 }
 
 Window::~Window () {

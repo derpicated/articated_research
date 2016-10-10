@@ -29,7 +29,7 @@ class vision_methods {
      * @param  image_in image to be segmented
      * @return          segmented image
      */
-    cv::Mat segmentation (const cv::Mat& image_in);
+    cv::Mat segmentation (const cv::Mat& image_in, std::vector<cv::KeyPoint>& key_poits);
 
     // structure? feature_extraction(const cv::Mat&image_in);
     // map? classification (const ...);

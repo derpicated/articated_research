@@ -135,13 +135,13 @@ void augmentation_widget::paintGL () {
 
     glBegin (GL_QUADS);
     glTexCoord2f (0.0, 1.0);
-    glVertex3f (-4.0, -3.0, 0.0);
+    glVertex3f (-4.0, -3.0, -1.0);
     glTexCoord2f (1.0, 1.0);
-    glVertex3f (4.0, -3.0, 0.0);
+    glVertex3f (4.0, -3.0, -1.0);
     glTexCoord2f (1.0, 0.0);
-    glVertex3f (4.0, 3.0, 0.0);
+    glVertex3f (4.0, 3.0, -1.0);
     glTexCoord2f (0.0, 0.0);
-    glVertex3f (-4.0, 3.0, 0.0);
+    glVertex3f (-4.0, 3.0, -1.0);
     glEnd ();
     // glPopMatrix ();
 

@@ -7,6 +7,7 @@ add_compile_options(-Wall -Wextra -Weffc++)
 
 set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
+set(SAMPLES_DIR ${CMAKE_SOURCE_DIR}/tests/samples)
 
 include_directories(${INCLUDE_DIR})
 

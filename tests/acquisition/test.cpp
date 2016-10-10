@@ -1,5 +1,4 @@
 #include "acquisition.hpp"
-#include <gtest/gtest.h>
 #include <opencv2/ts/ts.hpp>
 
 TEST (acquisition_test, acquisition_cam_count) {

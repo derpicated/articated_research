@@ -53,26 +53,17 @@ void augmentation_widget::setYPosition (float location) {
 
 void augmentation_widget::setXRotation (int angle) {
     qNormalizeAngle (angle);
-    if (angle != _x_rot) {
-        _x_rot = angle;
-        emit xRotationChanged (angle);
-    }
+    _x_rot = angle;
 }
 
 void augmentation_widget::setYRotation (int angle) {
     qNormalizeAngle (angle);
-    if (angle != _y_rot) {
-        _y_rot = angle;
-        emit yRotationChanged (angle);
-    }
+    _y_rot = angle;
 }
 
 void augmentation_widget::setZRotation (int angle) {
     qNormalizeAngle (angle);
-    if (angle != _z_rot) {
-        _z_rot = angle;
-        emit zRotationChanged (angle);
-    }
+    _z_rot = angle;
 }
 
 void augmentation_widget::initializeGL () {
@@ -135,22 +126,22 @@ void augmentation_widget::paintGL () {
 
     glBegin (GL_QUADS);
     glTexCoord2f (0.0, 1.0);
-    glVertex3f (-4.0, -3.0, -1.0);
+    glVertex3f (-4.0, -3.0, -2.0);
     glTexCoord2f (1.0, 1.0);
-    glVertex3f (4.0, -3.0, -1.0);
+    glVertex3f (4.0, -3.0, -2.0);
     glTexCoord2f (1.0, 0.0);
-    glVertex3f (4.0, 3.0, -1.0);
+    glVertex3f (4.0, 3.0, -2.0);
     glTexCoord2f (0.0, 0.0);
-    glVertex3f (-4.0, 3.0, -1.0);
+    glVertex3f (-4.0, 3.0, -2.0);
     glEnd ();
     // glPopMatrix ();
 
     glPushMatrix ();
     glScalef (_scale_factor, _scale_factor, _scale_factor);
-    glTranslatef (_x_pos, _y_pos, 0);
     glRotatef (_x_rot, 1, 0, 0);
     glRotatef (_y_rot, 0, 1, 0);
     glRotatef (_z_rot, 0, 0, 1);
+    glTranslatef (_x_pos, _y_pos, 0);
 
     glBegin (GL_QUADS);
     glNormal3f (0, 0, -1);

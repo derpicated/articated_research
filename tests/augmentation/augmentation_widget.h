@@ -22,11 +22,12 @@ class augmentation_widget : public QOpenGLWidget, protected QOpenGLFunctions {
     QSize sizeHint () const;
 
     public slots:
-    void setXPosition (int location);
-    void setYPosition (int location);
+    void setScale (float factor);
+    void setXPosition (float location);
+    void setYPosition (float location);
+    void setZRotation (int angle);
     void setXRotation (int angle);
     void setYRotation (int angle);
-    void setZRotation (int angle);
 
     signals:
     // signaling rotation from mouse movement
@@ -36,6 +37,7 @@ class augmentation_widget : public QOpenGLWidget, protected QOpenGLFunctions {
 
     private:
     unsigned int _framerate = 30;
+    float _scale_factor;
     float _x_pos;
     float _y_pos;
     int _x_rot;

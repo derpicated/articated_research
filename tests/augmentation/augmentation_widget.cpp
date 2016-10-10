@@ -7,6 +7,7 @@
 augmentation_widget::augmentation_widget (QWidget* parent)
 : QOpenGLWidget (parent)
 , _cap (0)
+, _scale_factor (1.0f)
 , _x_pos (0.0f)
 , _y_pos (0.0f)
 , _x_rot (0)
@@ -35,13 +36,18 @@ static void qNormalizeAngle (int& angle) {
     while (angle > 360) angle -= 360;
 }
 
-void augmentation_widget::setXPosition (int location) {
-    _x_pos = (float)location / 100;
+void augmentation_widget::setScale (float scale) {
+    _scale_factor = scale;
     // emit xPositionChanged (location);
 }
 
-void augmentation_widget::setYPosition (int location) {
-    _y_pos = (float)location / 100;
+void augmentation_widget::setXPosition (float location) {
+    _x_pos = location;
+    // emit xPositionChanged (location);
+}
+
+void augmentation_widget::setYPosition (float location) {
+    _y_pos = location;
     // emit yPositionChanged (location);
 }
 
@@ -140,6 +146,7 @@ void augmentation_widget::paintGL () {
     // glPopMatrix ();
 
     glPushMatrix ();
+    glScalef (_scale_factor, _scale_factor, _scale_factor);
     glTranslatef (_x_pos, _y_pos, 0);
     glRotatef (_x_rot, 1, 0, 0);
     glRotatef (_y_rot, 0, 1, 0);

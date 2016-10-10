@@ -12,7 +12,7 @@ compiler:
 
 cache:
   directories:
-  - opencv
+  - opencv-out
 
 notifications:
     email:
@@ -29,12 +29,13 @@ before_script:
     - git clone https://github.com/opencv/opencv.git
     - cd opencv
     - git checkout 2.4.13
-    - mkdir build
-    - cd build
-    - cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/usr/local ..
+    - cd ..
+    - mkdir opencv-out
+    - cd opencv-out
+    - cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/usr/local ../opencv
     - make -j 2 # travis has 2 cores, so let's use them
     - sudo make install
-    - cd ../../
+    - cd ../
 
 script:
     - mkdir build

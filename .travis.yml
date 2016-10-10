@@ -18,7 +18,7 @@ notifications:
 before_install:
     - sudo apt-get -qq update
     # install opencv dependencies
-    - sudo apt-get install libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
+    - sudo apt-get -qq install libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
 
 before_script:
     # install opencv from git repo

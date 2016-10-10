@@ -1,2 +1,3 @@
 add_subdirectory(preprocessing)
 add_subdirectory(acquisition)
+add_subdirectory(augmentation)

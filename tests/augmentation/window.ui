@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="GL_TestWidget" name="testWidget" native="true">
+    <widget class="augmentation_widget" name="testWidget" native="true">
      <property name="minimumSize">
       <size>
        <width>200</width>
@@ -62,7 +62,7 @@
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>yrot</string>
+        <string>yRot</string>
        </property>
       </widget>
      </item>
@@ -123,14 +123,125 @@
      </item>
     </layout>
    </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>xPos</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSlider" name="posXSlider">
+       <property name="minimum">
+        <number>-100</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="singleStep">
+        <number>2</number>
+       </property>
+       <property name="pageStep">
+        <number>1</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="tickPosition">
+        <enum>QSlider::TicksAbove</enum>
+       </property>
+       <property name="tickInterval">
+        <number>10</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>yPos</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSlider" name="posYSlider">
+       <property name="minimum">
+        <number>-100</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="singleStep">
+        <number>2</number>
+       </property>
+       <property name="pageStep">
+        <number>1</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="tickPosition">
+        <enum>QSlider::TicksAbove</enum>
+       </property>
+       <property name="tickInterval">
+        <number>10</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_6">
+     <item>
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>scale</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSlider" name="scaleSlider">
+       <property name="value">
+        <number>100</number>
+       </property>
+       <property name="minimum">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <number>200</number>
+       </property>
+       <property name="singleStep">
+        <number>5</number>
+       </property>
+       <property name="pageStep">
+        <number>1</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="tickPosition">
+        <enum>QSlider::TicksAbove</enum>
+       </property>
+       <property name="tickInterval">
+        <number>10</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>GL_TestWidget</class>
+   <class>augmentation_widget</class>
    <extends>QWidget</extends>
-   <header>gl_testwidget.h</header>
+   <header>augmentation_widget.h</header>
    <container>1</container>
    <slots>
     <slot>setXRotation(int)</slot>
@@ -140,54 +251,4 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>rotXSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>testWidget</receiver>
-   <slot>setXRotation(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>81</x>
-     <y>227</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>83</x>
-     <y>205</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>rotYSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>testWidget</receiver>
-   <slot>setYRotation(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>153</x>
-     <y>265</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>156</x>
-     <y>206</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>rotZSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>testWidget</receiver>
-   <slot>setZRotation(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>229</x>
-     <y>311</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>227</x>
-     <y>202</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
 </ui>

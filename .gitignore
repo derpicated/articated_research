@@ -65,7 +65,11 @@
 *.qbs.user
 *.qbs.user.*
 *.moc
+*_automoc.cpp
+*_automoc.cxx
 moc_*.cpp
+moc_*.cxx
+moc_*.cxx_parameters
 qrc_*.cpp
 ui_*.h
 Makefile*

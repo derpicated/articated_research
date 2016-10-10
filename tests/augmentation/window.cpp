@@ -23,13 +23,6 @@ Window::Window (QWidget* parent)
     SLOT (rotYSlider_valueChanged (int)));
     connect (ui->rotZSlider, SIGNAL (valueChanged (int)), this,
     SLOT (rotYSlider_valueChanged (int)));
-
-    connect (ui->testWidget, SIGNAL (xRotationChanged (int)), ui->rotXSlider,
-    SLOT (setValue (int)));
-    connect (ui->testWidget, SIGNAL (yRotationChanged (int)), ui->rotYSlider,
-    SLOT (setValue (int)));
-    connect (ui->testWidget, SIGNAL (zRotationChanged (int)), ui->rotZSlider,
-    SLOT (setValue (int)));
 }
 
 Window::~Window () {

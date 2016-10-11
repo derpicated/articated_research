@@ -42,7 +42,12 @@ std::map<unsigned int, cv::KeyPoint>& markers) {
 
     blob_detector.detect (image_in, key_points);
 
-    // markers[0] = key_points;
+    int i = 0;
+    for (cv::KeyPoint point : key_points) {
+        markers[i] = point;
+        ++i;
+    }
+
     cv::drawKeypoints (image_in, key_points, image_out);
     return image_out;
 }

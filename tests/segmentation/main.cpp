@@ -27,9 +27,9 @@ int main (int argc, char const* argv[]) {
     cv::Mat image_in, image_tmp, image_out;
     vision_methods segmentation_test;
     std::chrono::high_resolution_clock::time_point start_time;
-    const int fps               = 30;
-    unsigned int max_blob_count = 0, n;
-    double total_duration       = 0;
+    const int fps  = 30;
+    unsigned int n = 0, total_count = 0;
+    double total_duration = 0;
     std::vector<cv::KeyPoint> key_points;
 
     switch (type[0]) {
@@ -61,6 +61,7 @@ int main (int argc, char const* argv[]) {
 
     while (n > 0 || infinite_loop) {
         --n;
+        ++total_count;
         if (type == "c" || type == "v") {
             cap >> image_in;
         }
@@ -78,21 +79,14 @@ int main (int argc, char const* argv[]) {
             cv::imshow ("input", image_in);
         }
         if (!image_out.empty ()) {
-            cv::drawKeypoints (image_out, key_points, image_out);
             cv::imshow ("output", image_out);
             cv::moveWindow ("output", image_out.size ().width, 0);
         }
         cv::waitKey (1);
         std::this_thread::sleep_for (std::chrono::milliseconds (1000 / fps));
-
-        std::cout << "found " << key_points.size () << " keypoints\r" << std::flush;
-        if (max_blob_count < key_points.size ()) {
-            max_blob_count = key_points.size ();
-        }
     }
 
-    double average_duration = total_duration / 100;
-    std::cout << "found a maximum of " << max_blob_count << " blobs" << std::endl;
+    double average_duration = total_duration / total_count;
     std::cout << "segmentation on average took " << average_duration << " µs; ("
               << std::round (average_duration / 1000) << " ms)" << std::endl;
     return EXIT_SUCCESS;

@@ -34,11 +34,12 @@ class vision_methods {
 
     /**
      * extract features image
-     * remove background and transform to binary image.
      * @param  image_in image to be segmented
+     * @param  markers output map for found markers
      * @return          segmented image
      */
-    void extraction (const cv::Mat& image_in, std::map<unsigned int, cv::KeyPoint>&);
+    cv::Mat extraction (const cv::Mat& image_in,
+    std::map<unsigned int, cv::KeyPoint>& markers);
     // structure? feature_extraction(const cv::Mat&image_in);
     // map? classification (const ...);
 };

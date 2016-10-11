@@ -28,10 +28,10 @@ cv::Mat vision_methods::segmentation (const cv::Mat& image_in) {
     return image_out;
 }
 
-void vision_methods::extraction (const cv::Mat& image_in,
+cv::Mat vision_methods::extraction (const cv::Mat& image_in,
 std::map<unsigned int, cv::KeyPoint>& markers) {
     std::vector<cv::KeyPoint> key_points;
-
+    cv::Mat image_out;
     // blob detection creation
     cv::SimpleBlobDetector::Params blob_detector_params;
     blob_detector_params.filterByArea        = true;
@@ -42,5 +42,7 @@ std::map<unsigned int, cv::KeyPoint>& markers) {
 
     blob_detector.detect (image_in, key_points);
 
-    return;
+    // markers[0] = key_points;
+    cv::drawKeypoints (image_in, key_points, image_out);
+    return image_out;
 }

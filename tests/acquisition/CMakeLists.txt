@@ -20,4 +20,4 @@ target_link_libraries(
         gtest
         gtest_main
 )
-add_test( acquisition_test acquisition_test ${SAMPLES_DIR})
+add_test( acquisition_test acquisition_test)

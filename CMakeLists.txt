@@ -5,7 +5,7 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall -g")
 add_compile_options(-std=c++11) # CMake 2.8.12 or newer
 #set(CMAKE_CXX_STANDARD 11) # CMake 3.1 and newer
 
-add_compile_options(-Wall -Wextra -Weffc++)
+add_compile_options(-Wall -Wextra)
 
 set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)

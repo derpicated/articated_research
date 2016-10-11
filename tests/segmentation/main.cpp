@@ -19,7 +19,8 @@ int main (int argc, char const* argv[]) {
         std::cout << "data_type: c = camera (file is cam ID)" << std::endl;
         exit (EXIT_FAILURE);
     }
-    // open the file
+
+    bool infinite_loop = false;
     cv::VideoCapture cap;
     const std::string type = argv[1];
     const std::string file = argv[2];
@@ -27,7 +28,7 @@ int main (int argc, char const* argv[]) {
     vision_methods segmentation_test;
     std::chrono::high_resolution_clock::time_point start_time;
     const int fps               = 30;
-    unsigned int max_blob_count = 0;
+    unsigned int max_blob_count = 0, n;
     double total_duration       = 0;
     std::vector<cv::KeyPoint> key_points;
 
@@ -37,12 +38,14 @@ int main (int argc, char const* argv[]) {
                 std::cout << "camera could not be opened" << std::endl;
                 exit (EXIT_FAILURE);
             }
+            infinite_loop = true;
             break;
         case 'v':
             if (!cap.open ((file))) {
                 std::cout << "video could not be opened" << std::endl;
                 exit (EXIT_FAILURE);
             }
+            n = 100;
             break;
         case 'i':
             image_in = cv::imread (file, CV_LOAD_IMAGE_COLOR);
@@ -51,11 +54,13 @@ int main (int argc, char const* argv[]) {
                 std::cout << "could not open or find the image" << std::endl;
                 exit (EXIT_FAILURE);
             }
+            n = 1;
             break;
         default: std::cout << "not suported" << std::endl; exit (EXIT_FAILURE);
     }
 
-    for (int n = 100; n > 0; --n) {
+    while (n > 0 || infinite_loop) {
+        --n;
         if (type == "c" || type == "v") {
             cap >> image_in;
         }
@@ -63,7 +68,7 @@ int main (int argc, char const* argv[]) {
         // actuall test call
         image_tmp  = segmentation_test.preprocessing (image_in);
         start_time = std::chrono::high_resolution_clock::now ();
-        image_out  = segmentation_test.segmentation (image_tmp, key_points);
+        image_out  = segmentation_test.segmentation (image_tmp);
         total_duration += std::chrono::duration_cast<std::chrono::microseconds> (
         std::chrono::high_resolution_clock::now () -
         start_time).count ();

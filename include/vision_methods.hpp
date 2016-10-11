@@ -1,6 +1,7 @@
 #ifndef VISION_METHODS_HPP
 #define VISION_METHODS_HPP
 
+#include <map>
 #include <opencv2/opencv.hpp>
 
 class vision_methods {
@@ -29,8 +30,15 @@ class vision_methods {
      * @param  image_in image to be segmented
      * @return          segmented image
      */
-    cv::Mat segmentation (const cv::Mat& image_in, std::vector<cv::KeyPoint>& key_poits);
+    cv::Mat segmentation (const cv::Mat& image_in);
 
+    /**
+     * extract features image
+     * remove background and transform to binary image.
+     * @param  image_in image to be segmented
+     * @return          segmented image
+     */
+    void extraction (const cv::Mat& image_in, std::map<unsigned int, cv::KeyPoint>&);
     // structure? feature_extraction(const cv::Mat&image_in);
     // map? classification (const ...);
 };

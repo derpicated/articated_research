@@ -15,9 +15,18 @@ cv::Mat vision_methods::preprocessing (const cv::Mat& image_in) {
     return image_out;
 }
 
-cv::Mat vision_methods::segmentation (const cv::Mat& image_in,
-std::vector<cv::KeyPoint>& key_points) {
+cv::Mat vision_methods::segmentation (const cv::Mat& image_in) {
     cv::Mat image_out;
+
+    // segmentation
+    cv::Canny (image_in, image_out, 255, 50);
+
+    return image_out;
+}
+
+void vision_methods::extraction (const cv::Mat& image_in,
+std::map<unsigned int, cv::KeyPoint>& markers) {
+    std::vector<cv::KeyPoint> key_points;
 
     // blob detection creation
     cv::SimpleBlobDetector::Params blob_detector_params;
@@ -27,12 +36,11 @@ std::vector<cv::KeyPoint>& key_points) {
     blob_detector_params.minDistBetweenBlobs = 5.0; // 50?
     cv::SimpleBlobDetector blob_detector (blob_detector_params);
 
-    // segmentation
-    cv::Canny (image_in, image_out, 255, 100);
-    blob_detector.detect (image_out, key_points);
+    blob_detector.detect (image_in, key_points);
 
-    return image_out;
+    return;
 }
+
 // blob_detector_params.blobColor;
 // blob_detector_params.filterByCircularity;
 // blob_detector_params.filterByColor;

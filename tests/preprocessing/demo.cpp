@@ -13,7 +13,7 @@ int main (int argc, char const* argv[]) {
     // argv 1: type
     // argv 2: data
     if (argc != 3) {
-        std::cout << "Usage: preprocessing_test date_type date" << std::endl;
+        std::cout << "Usage: preprocessing_demo date_type date" << std::endl;
         std::cout << "data_type: v = video" << std::endl;
         std::cout << "data_type: i = image" << std::endl;
         std::cout << "data_type: c = camera (file is cam ID)" << std::endl;

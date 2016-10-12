@@ -25,10 +25,17 @@ before_install:
     - sudo apt-get -qq update
     # install opencv dependencies
     - sudo apt-get -qq install libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
+    - if [ "$QT_BASE" = "57" ]; then sudo add-apt-repository ppa:beineri/opt-qt57-trusty -y; fi
+
+install:
+    - sudo apt-get -qq update
+    - if [ "$QT_BASE" = "57" ]; then sudo apt-get install -qq qt57base; source /opt/qt57/bin/qt57-env.sh; fi
+    - sudo apt-get install -qq libopencv-dev
+    - sudo apt-get install -qq mesa-common-dev
+    - sudo apt-get install -qq libgl1-mesa-dev
 
 before_script:
     # install opencv from git repo
-    - if [ "$QT_BASE" = "57" ]; then sudo add-apt-repository ppa:beineri/opt-qt57-trusty -y; fi
     - git clone https://github.com/opencv/opencv.git
     - cd opencv
     - git checkout 2.4.13
@@ -39,13 +46,6 @@ before_script:
     - make -j 2 # travis has 2 cores, so let's use them
     - sudo make install
     - cd ../
-
-install:
-    - sudo apt-get -qq update
-    - if [ "$QT_BASE" = "57" ]; then sudo apt-get install -qq qt57base; source /opt/qt57/bin/qt57-env.sh; fi
-    - sudo apt-get install -qq libopencv-dev
-    - sudo apt-get install -qq mesa-common-dev
-    - sudo apt-get install -qq libgl1-mesa-dev
 
 script:
     - mkdir build

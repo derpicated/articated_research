@@ -7,6 +7,9 @@
 sudo apt-get -qq install build-essential
 sudo apt-get -qq install libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
 
+export CXX=g++
+export CC=gcc
+
 mkdir -p opencv-cache # make cache directory if not already available
 
 if [ "$(ls -A opencv-cache)" ]; then

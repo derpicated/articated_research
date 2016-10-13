@@ -17,3 +17,18 @@ cv::Mat vision_methods::preprocessing (const cv::Mat& image_in) {
 cv::Mat vision_methods::segmentation (const cv::Mat& image_in) {
     return image_in;
 }
+
+std::map<unsigned int, cv::KeyPoint> vision_methods::set_reference (cv::Mat& image_reference) {
+    (void)image_reference;
+    return {};
+}
+
+std::map<unsigned int, cv::KeyPoint> vision_methods::set_reference_keypoints (
+const std::map<unsigned int, cv::KeyPoint>& keypoints) {
+    (void)keypoints;
+    return {};
+}
+
+void classification (const std::map<unsigned int, cv::KeyPoint>& markers) {
+    (void)markers;
+}

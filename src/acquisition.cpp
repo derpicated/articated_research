@@ -60,12 +60,13 @@ void* userdata) {
     return 0; // Return value is not used
 }
 int acquisition::cam_count () {
-    cv::redirectError (handleError); // redirect opencv errors
+    // cv::redirectError (handleError); // redirect opencv errors
     cv::VideoCapture cam;
-    int max   = 10; // max to test
+    int max = 10; // max to test
+    return max;   // stub implementation
     int count = 0;
+    cv::redirectError (handleError);
     for (count = 0; count < max; count++) {
-        cv::redirectError (handleError);
         try {
             cam.open (count);
         } catch (...) {

@@ -11,9 +11,13 @@ target_link_libraries(
 
 project(acquisition_test)
 add_executable(acquisition_test test.cpp)
+find_package( OpenCV REQUIRED ts)
+add_definitions(-DSAMPLES_DIR="${SAMPLES_DIR}")
 target_link_libraries(
     acquisition_test
+        acquisition
+        ${OpenCV_LIBS}
         gtest
         gtest_main
 )
-add_test( acquisition_test acquisition_test )
+add_test( acquisition_test acquisition_test)

@@ -6,13 +6,13 @@
 
 augmentation_widget::augmentation_widget (QWidget* parent)
 : QOpenGLWidget (parent)
-, _cap (0)
 , _scale_factor (1.0f)
 , _x_pos (0.0f)
 , _y_pos (0.0f)
 , _x_rot (0)
 , _y_rot (0)
 , _z_rot (0)
+, _cap (0)
 , _frame_timer (new QTimer (this)) {
     connect (_frame_timer, SIGNAL (timeout ()), this, SLOT (update ()));
     _frame_timer->setInterval (1000 / _framerate);
@@ -102,7 +102,7 @@ void augmentation_widget::resizeGL (int width, int height) {
 }
 
 void augmentation_widget::paintGL () {
-    QOpenGLFunctions* f = QOpenGLContext::currentContext ()->functions ();
+    // QOpenGLFunctions* f = QOpenGLContext::currentContext ()->functions ();
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity ();
 

@@ -1,8 +1,8 @@
 // augmentation_widget.cpp
 
-#include <QDebug>
-
 #include "augmentation_widget.h"
+#include <GL/gl.h>
+#include <QDebug>
 
 augmentation_widget::augmentation_widget (QWidget* parent)
 : QOpenGLWidget (parent)
@@ -78,13 +78,14 @@ void augmentation_widget::initializeGL () {
     glMatrixMode (GL_PROJECTION);
     glEnable (GL_TEXTURE_2D);
     glGenTextures (1, &_texture_background);
+    glEnable (GL_COLOR_MATERIAL);
 
-    // glMatrixMode (GL_MODELVIEW);
-    /*static GLfloat lightPosition[4] = { 0, 0, 10, 1.0 };
+    glMatrixMode (GL_MODELVIEW);
+    static GLfloat lightPosition[4] = { 0, 0, 10, 1.0 };
     glLightfv (GL_LIGHT0, GL_POSITION, lightPosition);
     glLoadIdentity ();
-    gluPerspective (33.7, 1.3, 0.1, 100.0);
-    glMatrixMode (GL_MODELVIEW)*/
+    // gluPerspective (33.7, 1.3, 0.1, 100.0);
+    glMatrixMode (GL_MODELVIEW);
 }
 
 void augmentation_widget::resizeGL (int width, int height) {
@@ -102,6 +103,7 @@ void augmentation_widget::resizeGL (int width, int height) {
 }
 
 void augmentation_widget::paintGL () {
+    glMatrixMode (GL_MODELVIEW);
     // QOpenGLFunctions* f = QOpenGLContext::currentContext ()->functions ();
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity ();
@@ -119,12 +121,12 @@ void augmentation_widget::paintGL () {
     glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB, frame.cols, frame.rows, 0, GL_BGR,
     GL_UNSIGNED_BYTE, frame.ptr ());
 
-    // glMatrixMode (GL_MODELVIEW);
 
     // draw background
     glTranslatef (0.0, 0.0, -10.0);
 
     glBegin (GL_QUADS);
+    glColor3f (1, 1, 1);
     glTexCoord2f (0.0, 1.0);
     glVertex3f (-4.0, -3.0, -2.0);
     glTexCoord2f (1.0, 1.0);
@@ -134,16 +136,28 @@ void augmentation_widget::paintGL () {
     glTexCoord2f (0.0, 0.0);
     glVertex3f (-4.0, 3.0, -2.0);
     glEnd ();
-    // glPopMatrix ();
 
     glPushMatrix ();
+
+    /*GLfloat persp_mat[16] = { 1, 0, -3.845925372767128e-16, 0, 0,
+        0.5000000000000003, -5.768888059150692e-16, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+    glMultMatrixf (persp_mat);*/
+    //[1, 0, -3.845925372767128e-16;
+    // 0, 0.3333333333333335, 0.6666666666666663;
+    // 0, 0, 1]
+
+    //[1, 0, -3.845925372767128e-16;
+    // 0, 0.5000000000000003, -5.768888059150692e-16;
+    // 0, 0, 1]
+
+    glTranslatef (_x_pos, _y_pos, 0);
     glScalef (_scale_factor, _scale_factor, _scale_factor);
     glRotatef (_x_rot, 1, 0, 0);
     glRotatef (_y_rot, 0, 1, 0);
     glRotatef (_z_rot, 0, 0, 1);
-    glTranslatef (_x_pos, _y_pos, 0);
 
     glBegin (GL_QUADS);
+    glColor3f (0, 1, 1);
     glNormal3f (0, 0, -1);
     glVertex3f (-1, -1, 0);
     glVertex3f (-1, 1, 0);
@@ -152,24 +166,28 @@ void augmentation_widget::paintGL () {
     glEnd ();
 
     glBegin (GL_TRIANGLES);
+    glColor3f (1, 0, 0);
     glNormal3f (0, -1, 0.707);
     glVertex3f (-1, -1, 0);
     glVertex3f (1, -1, 0);
     glVertex3f (0, 0, 1.2);
     glEnd ();
     glBegin (GL_TRIANGLES);
+    glColor3f (0, 1, 0);
     glNormal3f (1, 0, 0.707);
     glVertex3f (1, -1, 0);
     glVertex3f (1, 1, 0);
     glVertex3f (0, 0, 1.2);
     glEnd ();
     glBegin (GL_TRIANGLES);
+    glColor3f (0, 0, 1);
     glNormal3f (0, 1, 0.707);
     glVertex3f (1, 1, 0);
     glVertex3f (-1, 1, 0);
     glVertex3f (0, 0, 1.2);
     glEnd ();
     glBegin (GL_TRIANGLES);
+    glColor3f (1, 1, 0);
     glNormal3f (-1, 0, 0.707);
     glVertex3f (-1, 1, 0);
     glVertex3f (-1, -1, 0);

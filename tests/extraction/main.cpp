@@ -24,7 +24,7 @@ int main (int argc, char const* argv[]) {
     cv::VideoCapture cap;
     const std::string type = argv[1];
     const std::string file = argv[2];
-    cv::Mat image_in, image_tmp, image_out;
+    cv::Mat image_in, image_pre, image_seg, image_out;
     vision_methods extraction_test;
     std::chrono::high_resolution_clock::time_point start_time;
     const int fps  = 30;
@@ -62,28 +62,31 @@ int main (int argc, char const* argv[]) {
     while (n > 0 || infinite_loop) {
         --n;
         ++total_count;
+        markers.clear ();
         if (type == "c" || type == "v") {
             cap >> image_in;
         }
 
         // actuall test call
-        image_tmp = extraction_test.preprocessing (image_in);
-        image_tmp = extraction_test.segmentation (image_tmp);
+        image_pre = extraction_test.preprocessing (image_in);
+        image_seg = extraction_test.segmentation (image_pre);
 
         start_time = std::chrono::high_resolution_clock::now ();
-        image_out  = extraction_test.extraction (image_tmp, markers);
+        image_out  = extraction_test.extraction (image_seg, markers);
         total_duration += std::chrono::duration_cast<std::chrono::microseconds> (
         std::chrono::high_resolution_clock::now () -
         start_time).count ();
 
         // display test results
-        if (!image_in.empty ()) {
-            cv::imshow ("input", image_in);
-        }
-        if (!image_out.empty ()) {
-            cv::imshow ("output", image_out);
-            cv::moveWindow ("output", image_out.size ().width, 0);
-        }
+        cv::imshow ("input", image_in);
+        cv::moveWindow ("input", 0, 0);
+        cv::imshow ("preprocessing", image_pre);
+        cv::moveWindow ("preprocessing", image_out.size ().width, 0);
+        cv::imshow ("segmentation", image_seg);
+        cv::moveWindow ("segmentation", 0, image_out.size ().height);
+        cv::imshow ("output", image_out);
+        cv::moveWindow ("output", image_out.size ().width, image_out.size ().height);
+
         cv::waitKey (1);
         std::this_thread::sleep_for (std::chrono::milliseconds (1000 / fps));
 

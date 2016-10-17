@@ -16,14 +16,9 @@ cv::Mat vision_methods::preprocessing (const cv::Mat& image_in) {
 }
 
 cv::Mat vision_methods::segmentation (const cv::Mat& image_in) {
-    cv::Mat image_out, image_thres;
+    cv::Mat image_out;
 
-    double otsus_threshold =
-    cv::threshold (image_in, image_thres, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
-
-    double CannyThresh = 0;
-
-    cv::Canny (image_in, image_out, CannyThresh, otsus_threshold);
+    cv::threshold (image_in, image_out, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
 
     return image_out;
 }
@@ -31,16 +26,13 @@ cv::Mat vision_methods::segmentation (const cv::Mat& image_in) {
 cv::Mat vision_methods::extraction (const cv::Mat& image_in,
 std::map<unsigned int, cv::KeyPoint>& markers) {
     std::vector<cv::KeyPoint> key_points;
-    std::vector<cv::Vec4i> hierarchy;
-    cv::RNG rng;
     cv::Mat image_out;
 
     // blob detection creation
     cv::SimpleBlobDetector::Params blob_detector_params;
-    blob_detector_params.filterByArea        = true;
-    blob_detector_params.maxArea             = 10000.0;
-    blob_detector_params.minArea             = 10.0;
-    blob_detector_params.minDistBetweenBlobs = 0; // 50?
+    blob_detector_params.filterByArea = true;
+    blob_detector_params.maxArea      = 10000.0;
+    blob_detector_params.minArea      = 10.0;
     cv::SimpleBlobDetector blob_detector (blob_detector_params);
 
     blob_detector.detect (image_in, key_points);
@@ -56,7 +48,9 @@ std::map<unsigned int, cv::KeyPoint>& markers) {
 }
 
 
-/*    cv::findContours (image_in, contours, hierarchy, CV_RETR_TREE,
+/*    std::vector<cv::Vec4i> hierarchy;
+    cv::RNG rng;
+    cv::findContours (image_in, contours, hierarchy, CV_RETR_TREE,
  CV_CHAIN_APPROX_SIMPLE);
 
   cv::Mat drawing = cv::Mat::zeros (image_in.size (), CV_8UC3);

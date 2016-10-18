@@ -26,7 +26,7 @@ cv::Mat vision_methods::segmentation (const cv::Mat& image_in) {
 cv::Mat vision_methods::extraction (const cv::Mat& image_in,
 std::map<unsigned int, cv::KeyPoint>& markers) {
     std::vector<cv::KeyPoint> key_points;
-    cv::Mat image_out;
+    cv::Mat image_out (image_in.rows, image_in.cols, CV_8UC1, cv::Scalar (0));
 
     // blob detection creation
     cv::SimpleBlobDetector::Params blob_detector_params;
@@ -40,10 +40,11 @@ std::map<unsigned int, cv::KeyPoint>& markers) {
     int i = 0;
     for (cv::KeyPoint point : key_points) {
         markers[i] = point;
+        circle (image_out, point.pt, point.size * 2, cv::Scalar (255), -1);
         ++i;
     }
 
-    cv::drawKeypoints (image_in, key_points, image_out);
+    cv::drawKeypoints (image_out, key_points, image_out);
     return image_out;
 }
 

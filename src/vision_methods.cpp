@@ -24,7 +24,7 @@ cv::Mat vision_methods::segmentation (const cv::Mat& image_in) {
 }
 
 cv::Mat vision_methods::extraction (const cv::Mat& image_in,
-std::map<unsigned int, cv::KeyPoint>& markers) {
+std::map<unsigned int, cv::Point2f>& markers) {
     std::vector<cv::KeyPoint> key_points;
     cv::Mat image_out (image_in.rows, image_in.cols, CV_8UC1, cv::Scalar (0));
 
@@ -37,17 +37,34 @@ std::map<unsigned int, cv::KeyPoint>& markers) {
 
     blob_detector.detect (image_in, key_points);
 
-    int i = 0;
     for (cv::KeyPoint point : key_points) {
-        markers[i] = point;
         circle (image_out, point.pt, point.size * 2, cv::Scalar (255), -1);
-        ++i;
     }
-
     cv::drawKeypoints (image_out, key_points, image_out);
+
+    extract_markers (key_points, markers);
     return image_out;
 }
 
+void vision_methods::extract_markers (std::vector<cv::KeyPoint>& key_points,
+std::map<unsigned int, cv::Point2f>& markers) {
+    std::vector<std::vector<cv::KeyPoint>> potential_markers;
+
+    while (!key_points.empty ()) {
+        cv::KeyPoint key_point = key_points.back ();
+        key_points.pop_back ();
+        int x = key_point.pt.x;
+        int y = key_point.pt.y;
+    }
+
+    for (std::vector<cv::KeyPoint> marker_points : potential_markers) {
+        unsigned int marker_id = marker_points.size ();
+        if (marker_id > 1) {
+            cv::Point2f marker_pos;
+            markers[marker_id] = marker_pos;
+        }
+    }
+}
 
 /*    std::vector<cv::Vec4i> hierarchy;
     cv::RNG rng;

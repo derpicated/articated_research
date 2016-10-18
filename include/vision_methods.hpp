@@ -10,6 +10,15 @@ class vision_methods {
     const int _ksize_y = 21;
     const int _sigma_x = 2;
     const int _sigma_y = 2;
+    const int _blob_size_ratio = 2; // ration between size and whitespace
+    /**
+     * extract markers from a map of features
+     * @param    points a vector of features
+     * @param    markers a map of MarkerID, MarkerLocation
+     * @return
+     */
+    void extract_markers (std::vector<cv::KeyPoint>& key_points,
+    std::map<unsigned int, cv::Point2f>& markers);
 
     public:
     vision_methods ();
@@ -38,8 +47,7 @@ class vision_methods {
      * @param  markers output map for found markers
      * @return          segmented image
      */
-    cv::Mat extraction (const cv::Mat& image_in,
-    std::map<unsigned int, cv::KeyPoint>& markers);
+    cv::Mat extraction (const cv::Mat& image_in, std::map<unsigned int, cv::Point2f>& markers);
     // structure? feature_extraction(const cv::Mat&image_in);
     // map? classification (const ...);
 };

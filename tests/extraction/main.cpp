@@ -30,7 +30,7 @@ int main (int argc, char const* argv[]) {
     const int fps  = 30;
     unsigned int n = 0, total_count = 0, max_blob_count = 0;
     double total_duration = 0;
-    std::map<unsigned int, cv::KeyPoint> markers;
+    std::map<unsigned int, cv::Point2f> markers;
 
     switch (type[0]) {
         case 'c':

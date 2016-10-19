@@ -19,7 +19,10 @@ class vision_methods {
      * @param    markers a map of MarkerID, MarkerLocation
      * @return
      */
-    void extract_markers (std::vector<cv::KeyPoint>& key_points,
+    void extract_groups (std::vector<cv::KeyPoint> key_points,
+    std::vector<std::vector<cv::KeyPoint>>& potential_markers);
+
+    void extract_markers (std::vector<std::vector<cv::KeyPoint>>& potential_markers,
     std::map<unsigned int, cv::Point2f>& markers);
 
     public:

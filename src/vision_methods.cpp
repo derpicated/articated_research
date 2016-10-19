@@ -42,14 +42,15 @@ std::map<unsigned int, cv::Point2f>& markers) {
     }
     cv::drawKeypoints (image_out, key_points, image_out);
 
-    extract_markers (key_points, markers);
+    std::vector<std::vector<cv::KeyPoint>> potential_markers;
+    extract_groups (key_points, potential_markers);
+    extract_markers (potential_markers, markers);
+
     return image_out;
 }
 
-void vision_methods::extract_markers (std::vector<cv::KeyPoint>& key_points,
-std::map<unsigned int, cv::Point2f>& markers) {
-    std::vector<std::vector<cv::KeyPoint>> potential_markers;
-
+void vision_methods::extract_groups (std::vector<cv::KeyPoint> key_points,
+std::vector<std::vector<cv::KeyPoint>>& potential_markers) {
     // group keypoints into markers by proximity
     while (!key_points.empty ()) {
         std::vector<cv::KeyPoint> grouped_points;
@@ -76,7 +77,10 @@ std::map<unsigned int, cv::Point2f>& markers) {
         grouped_points.push_back (key_point);
         potential_markers.push_back (grouped_points);
     }
+}
 
+void vision_methods::extract_markers (std::vector<std::vector<cv::KeyPoint>>& potential_markers,
+std::map<unsigned int, cv::Point2f>& markers) {
     // calculate marker properties (id, size, location)
     for (std::vector<cv::KeyPoint> marker_points : potential_markers) {
         const unsigned int marker_id = marker_points.size ();

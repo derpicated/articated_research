@@ -19,6 +19,9 @@ ow_cache(BUILD_WITH_DEBUG_INFO  ON  BOOL    "Include debug info into debug libs 
 ow_cache(WITH_GTK_2_X           ON  BOOL    "Use GTK version 2")
 ow_cache(WITH_LIBV4L            ON  BOOL    "Use libv4l for Video 4 Linux support")
 ow_cache(BUILD_opencv_ts        ON  BOOL    "Build opencv_ts")
+ow_cache(BUILD_opencv_python    OFF  BOOL   "Build opencv_python")
+ow_cache(BUILD_opencv_python2   OFF  BOOL   "Build opencv_python2")
+ow_cache(BUILD_opencv_python3   OFF  BOOL   "Build opencv_python3")
 
 # include opencv
 add_subdirectory(opencv)

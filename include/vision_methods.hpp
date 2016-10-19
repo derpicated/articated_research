@@ -13,15 +13,22 @@ class vision_methods {
     const unsigned int _MIN_MARKER_ID = 2;
     const unsigned int _MAX_MARKER_ID = 9;
     const int _BLOB_SIZE_RATIO        = 4; // ratio between size and whitespace
+
     /**
-     * extract markers from a map of features
-     * @param    points a vector of features
-     * @param    markers a map of MarkerID, MarkerLocation
-     * @return
-     */
+    * find groups from a vector of keypoints, based on proximity
+    * @param    key_points a vector of features
+    * @param    potential_markers ouptut containing groups of points
+    * @return
+    */
     void extract_groups (std::vector<cv::KeyPoint> key_points,
     std::vector<std::vector<cv::KeyPoint>>& potential_markers);
 
+    /**
+    * extract markers from a vector of marker candidates
+    * @param    potential_markers a vector of groups of keypoints
+    * @param    markers output map of MarkerID, MarkerLocation
+    * @return
+    */
     void extract_markers (std::vector<std::vector<cv::KeyPoint>>& potential_markers,
     std::map<unsigned int, cv::Point2f>& markers);
 

@@ -50,17 +50,51 @@ void vision_methods::extract_markers (std::vector<cv::KeyPoint>& key_points,
 std::map<unsigned int, cv::Point2f>& markers) {
     std::vector<std::vector<cv::KeyPoint>> potential_markers;
 
+    // group keypoints into markers by proximity
     while (!key_points.empty ()) {
+        std::vector<cv::KeyPoint> grouped_points;
         cv::KeyPoint key_point = key_points.back ();
         key_points.pop_back ();
-        int x = key_point.pt.x;
-        int y = key_point.pt.y;
+        float x = key_point.pt.x;
+        float y = key_point.pt.y;
+
+        // check distance against all other key points
+        for (auto itr = key_points.cbegin (); itr != key_points.cend ();) {
+            float dx       = x - itr->pt.x;
+            float dy       = y - itr->pt.y;
+            float distance = sqrt ((dx * dx) + (dy * dy));
+
+            // if the point is in range, group it with current point
+            if (distance < (key_point.size * _BLOB_SIZE_RATIO)) {
+                grouped_points.push_back (*itr);
+                key_points.erase (itr);
+            } else {
+                itr++;
+            }
+        }
+
+        grouped_points.push_back (key_point);
+        potential_markers.push_back (grouped_points);
     }
 
+    // calculate marker properties (id, size, location)
     for (std::vector<cv::KeyPoint> marker_points : potential_markers) {
-        unsigned int marker_id = marker_points.size ();
-        if (marker_id > 1) {
+        const unsigned int marker_id = marker_points.size ();
+
+        if (_MIN_MARKER_ID <= marker_id && marker_id <= _MAX_MARKER_ID) {
             cv::Point2f marker_pos;
+            float average_x = 0;
+            float average_y = 0;
+
+            for (cv::KeyPoint key_point : marker_points) {
+                //    average_size += key_point.size;
+                average_x += key_point.pt.x;
+                average_y += key_point.pt.y;
+            }
+
+            // average_size /= marker_id;
+            marker_pos.x       = average_x / marker_id;
+            marker_pos.y       = average_y / marker_id;
             markers[marker_id] = marker_pos;
         }
     }

@@ -1,6 +1,7 @@
 #include "vision_methods.hpp"
 //#include <oepncv2/features2d.hpp>
 #include <opencv2/opencv.hpp>
+#include <string>
 
 vision_methods::vision_methods () {
 }
@@ -28,24 +29,29 @@ std::map<unsigned int, cv::Point2f>& markers) {
     std::vector<cv::KeyPoint> key_points;
     cv::Mat image_out (image_in.rows, image_in.cols, CV_8UC1, cv::Scalar (0));
 
-    // blob detection creation
+    // blob detector creation
     cv::SimpleBlobDetector::Params blob_detector_params;
     blob_detector_params.filterByArea = true;
     blob_detector_params.maxArea      = 10000.0;
     blob_detector_params.minArea      = 10.0;
     cv::SimpleBlobDetector blob_detector (blob_detector_params);
 
+    // blob detection
     blob_detector.detect (image_in, key_points);
 
-    for (cv::KeyPoint point : key_points) {
-        circle (image_out, point.pt, point.size * 2, cv::Scalar (255), -1);
-    }
-    cv::drawKeypoints (image_out, key_points, image_out);
-
+    // marker extraction
     std::vector<std::vector<cv::KeyPoint>> potential_markers;
     extract_groups (key_points, potential_markers);
     extract_markers (potential_markers, markers);
 
+    // debug image construction
+    for (cv::KeyPoint point : key_points) {
+        circle (image_out, point.pt, point.size * 2, cv::Scalar (255), -1);
+    }
+    for (auto marker : markers) {
+        putText (image_out, std::to_string (marker.first), marker.second,
+        cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar (0));
+    }
     return image_out;
 }
 

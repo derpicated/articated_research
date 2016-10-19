@@ -7,6 +7,8 @@ add_compile_options(-std=c++11) # CMake 2.8.12 or newer
 
 add_compile_options(-Wall -Wextra)
 
+set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}" CACHE PATH "Output directory for applications")
+
 set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 set(SAMPLES_DIR ${CMAKE_SOURCE_DIR}/tests/samples)
@@ -14,6 +16,7 @@ set(SAMPLES_DIR ${CMAKE_SOURCE_DIR}/tests/samples)
 include_directories(${INCLUDE_DIR})
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+include(opencv)
 include(acquisition)
 include(vision_methods)
 

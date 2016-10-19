@@ -28,9 +28,15 @@ before_install:
 install:
     - sudo apt-get -qq update
     - if [ "$QT_BASE" = "57" ]; then sudo apt-get install -qq qt57base; source /opt/qt57/bin/qt57-env.sh; fi
-    #- sudo apt-get install -qq mesa-common-dev
-    #- sudo apt-get install -qq libgl1-mesa-dev
-    #- sudo ./tests/install_opencv.sh
+    - sudo apt-get install -qq mesa-common-dev
+    - sudo apt-get install -qq libgl1-mesa-dev
+    - sudo apt-get install -qq libgl1-mesa-dev
+    - sudo apt-get install -qq libgtk2.0-dev
+    - sudo apt-get install -qq pkg-config
+    - sudo apt-get install -qq libavcodec-dev
+    - sudo apt-get install -qq libavformat-dev
+    - sudo apt-get install -qq libswscale-dev
+    - sudo apt-get install -qq libv4l-dev
 
 script:
     - mkdir build

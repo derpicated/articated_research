@@ -60,8 +60,7 @@ std::vector<std::vector<cv::KeyPoint>>& potential_markers) {
         float y = key_point.pt.y;
 
         // check distance against all other key points
-        for (std::vector<cv::KeyPoint>::const_iterator itr = key_points.cbegin ();
-             itr != key_points.cend ();) {
+        for (auto itr = key_points.cbegin (); itr != key_points.cend ();) {
             float dx       = x - itr->pt.x;
             float dy       = y - itr->pt.y;
             float distance = sqrt ((dx * dx) + (dy * dy));

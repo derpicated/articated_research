@@ -2,6 +2,7 @@
 #define ACQUISITION_HPP
 
 #include <opencv2/opencv.hpp>
+#include <opencv2/videoio.hpp>
 
 class acquisition {
     private:

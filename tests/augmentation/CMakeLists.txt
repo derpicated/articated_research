@@ -13,7 +13,7 @@ qt5_wrap_ui(augmentation_test_UI_HEADERS ${augmentation_test_FORMS})
 add_executable( augmentation_test ${augmentation_test_SOURCES}
                 ${augmentation_test_UI_HEADERS})
 
-target_link_libraries(augmentation_test ${QT_LIBRARIES} GL opencv_core opencv_highgui)
+target_link_libraries(augmentation_test ${QT_LIBRARIES} GL opencv_core opencv_highgui opencv_videoio)
 
 qt5_use_modules(augmentation_test Core Gui Widgets OpenGL)
 #-----------------------------------------------------------------------------

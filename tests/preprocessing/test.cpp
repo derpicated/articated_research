@@ -2,7 +2,7 @@
 #include "vision_methods.hpp"
 #include <fstream>
 #include <opencv2/opencv.hpp>
-#include <opencv2/ts/ts.hpp>
+#include <opencv2/ts.hpp>
 
 #ifndef SAMPLES_DIR
 #define SAMPLES_DIR ""

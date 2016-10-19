@@ -17,4 +17,6 @@ target_link_libraries(
         gtest
         gtest_main
 )
-add_test( classification_test classification_test)
+add_test(NAME classification_test
+         COMMAND classification_test
+         WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})

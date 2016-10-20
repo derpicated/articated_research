@@ -55,6 +55,18 @@ std::map<unsigned int, cv::Point2f>& markers) {
     return image_out;
 }
 
+
+/*iterate over all blobs, find in-range-neighbours
+store this in vector containing pairs? or struct:
+    vector< vector<keypoints>::iterator> <- list of references to all neighbours
+    keypoint
+
+to create finalized markers:
+if the vector of neighbours is 0, discard keypoint.
+otherwise, get recursively group keypoints, deleting them from the main keypoint
+vector before calling the recursive function again.
+*/
+
 void vision_methods::extract_groups (std::vector<cv::KeyPoint> key_points,
 std::vector<std::vector<cv::KeyPoint>>& potential_markers) {
     // group keypoints into markers by proximity

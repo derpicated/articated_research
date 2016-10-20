@@ -15,6 +15,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 include(opencv)
 include(acquisition)
 include(vision_methods)
+include(augmentation_widget)
 
 # tests
 option(TESTS "Enable ARticated tests" OFF)

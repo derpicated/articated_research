@@ -41,17 +41,16 @@ class augmentation_widget : public QOpenGLWidget, protected QOpenGLFunctions {
     void zRotationChanged (int angle);
 
     private:
-    unsigned int _framerate = 30;
+    const unsigned int _framerate = 30;
     float _scale_factor;
     float _x_pos;
     float _y_pos;
     int _x_rot;
     int _y_rot;
     int _z_rot;
-    QTimer* _frame_timer;
-    QPoint _lastPos;
-    GLuint _texture_background;
     cv::VideoCapture _cap;
+    GLuint _texture_background;
+    QTimer* _frame_timer;
 };
 
 #endif // AUGMENTATION_WIDGET_H

@@ -1,7 +1,5 @@
 project(acquisition_demo)
 
-find_package(OpenCV REQUIRED)
-
 add_executable(acquisition_demo demo.cpp)
 target_link_libraries(
     acquisition_demo
@@ -11,7 +9,6 @@ target_link_libraries(
 
 project(acquisition_test)
 add_executable(acquisition_test test.cpp)
-find_package( OpenCV REQUIRED ts)
 add_definitions(-DSAMPLES_DIR="${SAMPLES_DIR}")
 target_link_libraries(
     acquisition_test
@@ -20,4 +17,6 @@ target_link_libraries(
         gtest
         gtest_main
 )
-add_test( acquisition_test acquisition_test)
+add_test(NAME acquisition_test
+         COMMAND acquisition_test
+         WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})

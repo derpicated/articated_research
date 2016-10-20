@@ -9,6 +9,7 @@ class vision_methods {
     const int _ksize_y = 21;
     const int _sigma_x = 2;
     const int _sigma_y = 2;
+    std::map<unsigned int, cv::KeyPoint> _reference_markers = {};
 
     public:
     vision_methods ();
@@ -31,8 +32,26 @@ class vision_methods {
      */
     cv::Mat segmentation (const cv::Mat& image_in);
 
-    // structure? feature_extraction(const cv::Mat&image_in);
-    // map? classification (const ...);
+    /**
+     * set the reference from image
+     * @param image_reference the reference image
+     * @return returns the reference that is stored
+     */
+    std::map<unsigned int, cv::KeyPoint> set_reference (cv::Mat& image_reference);
+
+    /**
+     * set the reference from key points
+     * @param markers are the reference markers
+     * @return returns the reference markers
+     */
+    std::map<unsigned int, cv::KeyPoint> set_reference_keypoints (
+    const std::map<unsigned int, cv::KeyPoint>& markers);
+
+    /**
+     * classify the markers and calculate the rotation of the image
+     * @param markers are the key points (the marker locations)
+     */
+    void classification (const std::map<unsigned int, cv::KeyPoint>& markers);
 };
 
 

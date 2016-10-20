@@ -1,11 +1,9 @@
 cmake_minimum_required(VERSION 2.8.11)
 
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall -g")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall -g -O0")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -g -O0")
 
-add_compile_options(-std=c++11) # CMake 2.8.12 or newer
-#set(CMAKE_CXX_STANDARD 11) # CMake 3.1 and newer
-
-add_compile_options(-Wall -Wextra)
+set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}" CACHE PATH "Output directory for applications")
 
 set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
@@ -14,6 +12,7 @@ set(SAMPLES_DIR ${CMAKE_SOURCE_DIR}/tests/samples)
 include_directories(${INCLUDE_DIR})
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+include(opencv)
 include(acquisition)
 include(vision_methods)
 include(augmentation_widget)

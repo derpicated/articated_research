@@ -22,6 +22,7 @@ ow_cache(BUILD_opencv_ts        ON  BOOL    "Build opencv_ts")
 ow_cache(BUILD_opencv_python    OFF  BOOL   "Build opencv_python")
 ow_cache(BUILD_opencv_python2   OFF  BOOL   "Build opencv_python2")
 ow_cache(BUILD_opencv_python3   OFF  BOOL   "Build opencv_python3")
+ow_cache(WITH_GSTREAMER_0_10    ON   BOOL   "Build with gstreamer")
 
 # include opencv
 add_subdirectory(opencv)

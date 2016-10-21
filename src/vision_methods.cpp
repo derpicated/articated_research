@@ -3,6 +3,26 @@
 #include <opencv2/opencv.hpp>
 #include <string>
 
+namespace cv {
+// needed for map usage
+bool operator< (const KeyPoint& point, const KeyPoint& other_point) {
+    bool ans = false;
+    if (point.pt.x < other_point.pt.x) {
+        ans = true;
+    } else if (point.pt.x == other_point.pt.x && point.pt.y < other_point.pt.y) {
+        ans = true;
+    }
+    return ans;
+}
+bool operator!= (const KeyPoint& point, const KeyPoint& other_point) {
+    bool ans = true;
+    if (point.pt.x == other_point.pt.x && point.pt.y == other_point.pt.y) {
+        ans = false;
+    }
+    return ans;
+}
+}
+
 vision_methods::vision_methods () {
 }
 
@@ -58,42 +78,39 @@ std::map<unsigned int, cv::Point2f>& markers) {
 
 /*iterate over all blobs, find in-range-neighbours
 store this in vector containing pairs? or struct:
-    vector< vector<keypoints>::iterator> <- list of references to all neighbours
+    vector< vector<keypoints>::iterator> <- list of references to all
+neighbours
     keypoint
 
 to create finalized markers:
 if the vector of neighbours is 0, discard keypoint.
-otherwise, get recursively group keypoints, deleting them from the main keypoint
+otherwise, get recursively group keypoints, deleting them from the main
+keypoint
 vector before calling the recursive function again.
 */
 
 void vision_methods::extract_groups (std::vector<cv::KeyPoint> key_points,
 std::vector<std::vector<cv::KeyPoint>>& potential_markers) {
     // group keypoints into markers by proximity
-    while (!key_points.empty ()) {
-        std::vector<cv::KeyPoint> grouped_points;
-        cv::KeyPoint key_point = key_points.back ();
-        key_points.pop_back ();
-        float x = key_point.pt.x;
-        float y = key_point.pt.y;
+    std::map<cv::KeyPoint, std::vector<cv::KeyPoint>> neighbours;
 
-        // check distance against all other key points
-        for (auto itr = key_points.begin (); itr != key_points.end ();) {
-            float dx       = x - itr->pt.x;
-            float dy       = y - itr->pt.y;
-            float distance = sqrt ((dx * dx) + (dy * dy));
+    for (cv::KeyPoint point : key_points) {
+        float range = point.size * _BLOB_SIZE_RATIO;
+        float x     = point.pt.x;
+        float y     = point.pt.y;
 
-            // if the point is in range, group it with current point
-            if (distance < (key_point.size * _BLOB_SIZE_RATIO)) {
-                grouped_points.push_back (*itr);
-                key_points.erase (itr);
-            } else {
-                itr++;
+        for (cv::KeyPoint other_point : key_points) {
+            if (point != other_point) {
+                float dx       = x - other_point.pt.x;
+                float dy       = y - other_point.pt.y;
+                float distance = sqrt ((dx * dx) + (dy * dy));
+
+                // if other_point is in range, group it with point
+                if (distance < range) {
+                    neighbours[point].push_back (other_point);
+                }
             }
         }
-
-        grouped_points.push_back (key_point);
-        potential_markers.push_back (grouped_points);
     }
 }
 
@@ -121,3 +138,30 @@ std::map<unsigned int, cv::Point2f>& markers) {
         }
     }
 }
+
+
+/*while (!key_points.empty ()) {
+    std::vector<cv::KeyPoint> grouped_points;
+    cv::KeyPoint key_point = key_points.back ();
+    key_points.pop_back ();
+    float x = key_point.pt.x;
+    float y = key_point.pt.y;
+
+    // check distance against all other key points
+    for (auto itr = key_points.begin (); itr != key_points.end ();) {
+        float dx       = x - itr->pt.x;
+        float dy       = y - itr->pt.y;
+        float distance = sqrt ((dx * dx) + (dy * dy));
+
+        // if the point is in range, group it with current point
+        if (distance < (key_point.size * _BLOB_SIZE_RATIO)) {
+            grouped_points.push_back (*itr);
+            key_points.erase (itr);
+        } else {
+            itr++;
+        }
+    }
+
+    grouped_points.push_back (key_point);
+    potential_markers.push_back (grouped_points);
+}*/

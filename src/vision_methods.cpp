@@ -54,8 +54,8 @@ std::map<unsigned int, cv::Point2f>& markers) {
     blob_detector_params.filterByArea = true;
     blob_detector_params.maxArea      = 10000.0;
     blob_detector_params.minArea      = 10.0;
-    cv::SimpleBlobDetector blob_detector (blob_detector_params);
-
+    cv::SimpleBlobDetector blob_detector;
+    blob_detector.create (blob_detector_params);
     // blob detection
     blob_detector.detect (image_in, key_points);
 
@@ -167,5 +167,3 @@ const std::map<unsigned int, cv::KeyPoint>& keypoints) {
 void classification (const std::map<unsigned int, cv::KeyPoint>& markers) {
     (void)markers;
 }
-
-

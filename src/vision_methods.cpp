@@ -54,10 +54,11 @@ std::map<unsigned int, cv::Point2f>& markers) {
     blob_detector_params.filterByArea = true;
     blob_detector_params.maxArea      = 10000.0;
     blob_detector_params.minArea      = 10.0;
-    cv::SimpleBlobDetector blob_detector;
-    blob_detector.create (blob_detector_params);
+    cv::Ptr<cv::SimpleBlobDetector> blob_detector =
+    cv::SimpleBlobDetector::create (blob_detector_params);
+
     // blob detection
-    blob_detector.detect (image_in, key_points);
+    blob_detector->detect (image_in, key_points);
 
     // marker extraction
     std::vector<std::vector<cv::KeyPoint>> potential_markers;

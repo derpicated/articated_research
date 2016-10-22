@@ -24,6 +24,17 @@ class vision_methods {
     std::vector<std::vector<cv::KeyPoint>>& potential_markers);
 
     /**
+    * recursively link all blobs in group
+    * @param    neighbours contains all grouped neighbours per KeyPoint
+    * @param    potential_marker contains all blobs for one potential marker
+    * @param    point the keypoint thats under inspection
+    * @return
+    */
+    void extract_groups_link (std::map<cv::KeyPoint, std::vector<cv::KeyPoint>>& neighbours,
+    std::vector<cv::KeyPoint>& potential_marker,
+    const cv::KeyPoint& point);
+
+    /**
     * extract markers from a vector of marker candidates
     * @param    potential_markers a vector of groups of keypoints
     * @param    markers output map of MarkerID, MarkerLocation

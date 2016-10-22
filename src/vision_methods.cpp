@@ -75,25 +75,12 @@ std::map<unsigned int, cv::Point2f>& markers) {
     return image_out;
 }
 
-
-/*iterate over all blobs, find in-range-neighbours
-store this in vector containing pairs? or struct:
-    vector< vector<keypoints>::iterator> <- list of references to all
-neighbours
-    keypoint
-
-to create finalized markers:
-if the vector of neighbours is 0, discard keypoint.
-otherwise, get recursively group keypoints, deleting them from the main
-keypoint
-vector before calling the recursive function again.
-*/
-
 void vision_methods::extract_groups (std::vector<cv::KeyPoint> key_points,
 std::vector<std::vector<cv::KeyPoint>>& potential_markers) {
     // group keypoints into markers by proximity
     std::map<cv::KeyPoint, std::vector<cv::KeyPoint>> neighbours;
 
+    // get all neighbours for each blob
     for (cv::KeyPoint point : key_points) {
         float range = point.size * _BLOB_SIZE_RATIO;
         float x     = point.pt.x;
@@ -110,6 +97,33 @@ std::vector<std::vector<cv::KeyPoint>>& potential_markers) {
                     neighbours[point].push_back (other_point);
                 }
             }
+        }
+    }
+
+    // recursively link all neighbours into groups
+    while (!neighbours.empty ()) {
+        std::vector<cv::KeyPoint> potential_marker;
+        extract_groups_link (neighbours, potential_marker, neighbours.begin ()->first);
+        potential_markers.push_back (potential_marker);
+    }
+}
+
+void vision_methods::extract_groups_link (
+std::map<cv::KeyPoint, std::vector<cv::KeyPoint>>& neighbours,
+std::vector<cv::KeyPoint>& potential_marker,
+const cv::KeyPoint& point) {
+    // if the point hasnt been processed yet
+    if (neighbours.find (point) != neighbours.end ()) {
+        // add the point to the markert
+        // get its neighbours
+        // and remove the from the unprocessed lis
+        potential_marker.push_back (point);
+        std::vector<cv::KeyPoint> neighbour_list = neighbours[point];
+        neighbours.erase (point);
+
+        for (cv::KeyPoint neighbour_point : neighbour_list) {
+            // link all the neighbours neighbours
+            extract_groups_link (neighbours, potential_marker, neighbour_point);
         }
     }
 }

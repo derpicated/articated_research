@@ -15,7 +15,7 @@ TEST (preprocessing_image_no_fail_video, preprocessing) {
     vision_methods vm_test;
     cv::Mat image;
     ASSERT_NO_THROW (ac_test.source (
-    std::string (SAMPLES_DIR) + std::string ("/3_marker_with_border.webm")))
+    std::string (SAMPLES_DIR) + std::string ("/3_markers_good.webm")))
     << "the sample video file cannot be read";
     ASSERT_NO_THROW (image = ac_test.capture ())
     << "the file cannot be captured";

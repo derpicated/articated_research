@@ -153,29 +153,19 @@ std::map<unsigned int, cv::Point2f>& markers) {
     }
 }
 
+std::map<unsigned int, cv::KeyPoint> vision_methods::set_reference (cv::Mat& image_reference) {
+    (void)image_reference;
+    return {};
+}
 
-/*while (!key_points.empty ()) {
-    std::vector<cv::KeyPoint> grouped_points;
-    cv::KeyPoint key_point = key_points.back ();
-    key_points.pop_back ();
-    float x = key_point.pt.x;
-    float y = key_point.pt.y;
+std::map<unsigned int, cv::KeyPoint> vision_methods::set_reference_keypoints (
+const std::map<unsigned int, cv::KeyPoint>& keypoints) {
+    (void)keypoints;
+    return {};
+}
 
-    // check distance against all other key points
-    for (auto itr = key_points.begin (); itr != key_points.end ();) {
-        float dx       = x - itr->pt.x;
-        float dy       = y - itr->pt.y;
-        float distance = sqrt ((dx * dx) + (dy * dy));
+void classification (const std::map<unsigned int, cv::KeyPoint>& markers) {
+    (void)markers;
+}
 
-        // if the point is in range, group it with current point
-        if (distance < (key_point.size * _BLOB_SIZE_RATIO)) {
-            grouped_points.push_back (*itr);
-            key_points.erase (itr);
-        } else {
-            itr++;
-        }
-    }
 
-    grouped_points.push_back (key_point);
-    potential_markers.push_back (grouped_points);
-}*/

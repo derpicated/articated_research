@@ -13,6 +13,7 @@ class vision_methods {
     const unsigned int _MIN_MARKER_ID = 2;
     const unsigned int _MAX_MARKER_ID = 9;
     const int _BLOB_SIZE_RATIO        = 4; // ratio between size and whitespace
+    std::map<unsigned int, cv::KeyPoint> _reference_markers = {};
 
     /**
     * find groups from a vector of keypoints, based on proximity
@@ -71,8 +72,27 @@ class vision_methods {
      * @return          segmented image
      */
     cv::Mat extraction (const cv::Mat& image_in, std::map<unsigned int, cv::Point2f>& markers);
-    // structure? feature_extraction(const cv::Mat&image_in);
-    // map? classification (const ...);
+    
+    /**
+     * set the reference from image
+     * @param image_reference the reference image
+     * @return returns the reference that is stored
+     */
+    std::map<unsigned int, cv::KeyPoint> set_reference (cv::Mat& image_reference);
+
+    /**
+     * set the reference from key points
+     * @param markers are the reference markers
+     * @return returns the reference markers
+     */
+    std::map<unsigned int, cv::KeyPoint> set_reference_keypoints (
+    const std::map<unsigned int, cv::KeyPoint>& markers);
+
+    /**
+     * classify the markers and calculate the rotation of the image
+     * @param markers are the key points (the marker locations)
+     */
+    void classification (const std::map<unsigned int, cv::KeyPoint>& markers);
 };
 
 

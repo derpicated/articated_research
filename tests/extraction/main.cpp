@@ -28,8 +28,9 @@ int main (int argc, char const* argv[]) {
     vision_methods extraction_test;
     std::chrono::high_resolution_clock::time_point start_time;
     const int fps  = 30;
-    unsigned int n = 0, total_count = 0, max_blob_count = 0;
+    unsigned int n = 0, total_count = 0;
     double total_duration = 0;
+    std::map<unsigned int, cv::Point2f> total_markers;
     std::map<unsigned int, cv::Point2f> markers;
 
     switch (type[0]) {
@@ -90,14 +91,22 @@ int main (int argc, char const* argv[]) {
         cv::waitKey (1);
         std::this_thread::sleep_for (std::chrono::milliseconds (1000 / fps));
 
-        std::cout << "found " << markers.size () << " keypoints\r" << std::flush;
-        if (max_blob_count < markers.size ()) {
-            max_blob_count = markers.size ();
+        std::cout << "found " << markers.size () << " makrers: ";
+        for (auto marker : markers) {
+            std::cout << marker.first << "  ";
+            total_markers[marker.first] = marker.second;
         }
+        std::cout << '\r' << std::flush;
     }
 
     double average_duration = total_duration / total_count;
-    std::cout << "found a maximum of " << max_blob_count << " blobs" << std::endl;
+    std::cout << "found a maximum of " << total_markers.size () << " markers" << std::endl;
+    for (auto marker : total_markers) {
+        std::cout << "marker #" << marker.first
+                  << " was last seen at: x=" << marker.second.x
+                  << ", y=" << marker.second.y << std::endl;
+    }
+
     std::cout << "extraction on average took " << average_duration << " µs; ("
               << std::round (average_duration / 1000) << " ms)" << std::endl;
     return EXIT_SUCCESS;

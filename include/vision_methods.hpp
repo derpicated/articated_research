@@ -1,15 +1,17 @@
 #ifndef VISION_METHODS_HPP
 #define VISION_METHODS_HPP
 
+#include "movement3d.hpp"
 #include <opencv2/opencv.hpp>
 
 class vision_methods {
     private:
-    const int _ksize_x = 21;
-    const int _ksize_y = 21;
-    const int _sigma_x = 2;
-    const int _sigma_y = 2;
-    std::map<unsigned int, cv::KeyPoint> _reference_markers = {};
+    const int _ksize_x                     = 21;
+    const int _ksize_y                     = 21;
+    const int _sigma_x                     = 2;
+    const int _sigma_y                     = 2;
+    const unsigned int _minimal_ref_points = 2;
+    std::map<unsigned int, cv::Point2f> _reference_markers = {};
 
     public:
     vision_methods ();
@@ -37,21 +39,21 @@ class vision_methods {
      * @param image_reference the reference image
      * @return returns the reference that is stored
      */
-    std::map<unsigned int, cv::KeyPoint> set_reference (cv::Mat& image_reference);
+    std::map<unsigned int, cv::Point2f> set_reference (const cv::Mat& image_reference);
 
     /**
      * set the reference from key points
      * @param markers are the reference markers
      * @return returns the reference markers
      */
-    std::map<unsigned int, cv::KeyPoint> set_reference_keypoints (
-    const std::map<unsigned int, cv::KeyPoint>& markers);
+    std::map<unsigned int, cv::Point2f> set_reference (
+    const std::map<unsigned int, cv::Point2f>& markers);
 
     /**
      * classify the markers and calculate the rotation of the image
      * @param markers are the key points (the marker locations)
      */
-    void classification (const std::map<unsigned int, cv::KeyPoint>& markers);
+    movement3d classification (const std::map<unsigned int, cv::Point2f>& markers);
 };
 
 

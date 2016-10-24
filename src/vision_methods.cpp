@@ -1,4 +1,5 @@
 #include "vision_methods.hpp"
+#include "movement3d.hpp"
 #include <opencv2/opencv.hpp>
 
 vision_methods::vision_methods () {
@@ -18,17 +19,25 @@ cv::Mat vision_methods::segmentation (const cv::Mat& image_in) {
     return image_in;
 }
 
-std::map<unsigned int, cv::KeyPoint> vision_methods::set_reference (cv::Mat& image_reference) {
+std::map<unsigned int, cv::Point2f> vision_methods::set_reference (
+const cv::Mat& image_reference) {
     (void)image_reference;
+    throw std::runtime_error (
+    "missing implementation of set_reference from image");
     return {};
 }
 
-std::map<unsigned int, cv::KeyPoint> vision_methods::set_reference_keypoints (
-const std::map<unsigned int, cv::KeyPoint>& keypoints) {
-    (void)keypoints;
-    return {};
+std::map<unsigned int, cv::Point2f> vision_methods::set_reference (
+const std::map<unsigned int, cv::Point2f>& markers) {
+    if (markers.size () < _minimal_ref_points) {
+        throw std::length_error ("too few reference points");
+    }
+    _reference_markers = markers;
+    return _reference_markers;
 }
 
-void classification (const std::map<unsigned int, cv::KeyPoint>& markers) {
+movement3d classification (const std::map<unsigned int, cv::Point2f>& markers) {
     (void)markers;
+    movement3d movement;
+    return movement;
 }

@@ -16,6 +16,7 @@ include(opencv)
 include(acquisition)
 include(vision_methods)
 include(augmentation_widget)
+include(articated_app)
 
 # tests
 option(TESTS "Enable ARticated tests" OFF)

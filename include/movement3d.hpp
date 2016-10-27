@@ -31,6 +31,23 @@ class movement3d {
     void mat33_to_glfloat44 (cv::Mat& mat, GLfloat gl[GL44_SIZE]);
 
     /**
+     * convert a translation delta to an absolute value on a plane
+     * (t_max - t_min) = steps that can be taken
+     * [cross-multiplication]
+     * absolute_value   =   steps
+     * delta_value      =   ref_width
+     * @param  d_value   delta value
+     * @param  ref_width reference width (e.g. image width)
+     * @param  t_min     translate minimum
+     * @param  t_max     translate maximum
+     * @return           the absolute value
+     */
+    float translation_delta_to_absolute (float d_value,
+    int ref_width,
+    float t_min = -1.0,
+    float t_max = 1.0);
+
+    /**
      * rotation in x direction
      * @param x rotation matrix
      */

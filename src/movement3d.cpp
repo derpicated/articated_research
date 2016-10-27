@@ -47,6 +47,10 @@ void movement3d::mat33_to_glfloat44 (cv::Mat& mat, GLfloat gl[16]) {
     gl[15] = 1;
 }
 
+float movement3d::translation_delta_to_absolute (float d_value, int ref_width, float t_min, float t_max) {
+    return (((t_max - t_min) * d_value) / ref_width);
+}
+
 // rotation
 void movement3d::rot_x (const cv::Mat& x) {
     _rotation_x = x;

@@ -29,3 +29,36 @@ TEST (movement3d_mat33_to_glfloat44_nofail, movement3d) {
         ASSERT_EQ (t[i], out[i]) << "matrix not copied over correctly!";
     }
 }
+
+TEST (movement3d_translation_delta_to_absolute_nofail, movement3d) {
+    movement3d movement3d_test;
+    //          x         no movement (delta is 0)
+    // -1       0        1
+    // | ------ | ------ |
+    ASSERT_FLOAT_EQ (movement3d_test.translation_delta_to_absolute (0, 100, -1.0, 1.0), 0);
+
+    //          x -->10   10 points to right
+    // -1       0        1
+    // | ------ | ------ |
+    ASSERT_FLOAT_EQ (
+    movement3d_test.translation_delta_to_absolute (10, 100, -1.0, 1.0), 0.2);
+
+    //    10<-- x         10 points to left
+    // -1       0        1
+    // | ------ | ------ |
+    ASSERT_FLOAT_EQ (
+    movement3d_test.translation_delta_to_absolute (-10, 100, -1.0, 1.0), -0.2);
+
+    //          x -->50   50 points to right
+    // -1       0        1
+    // | ------ | ------ |
+    ASSERT_FLOAT_EQ (
+    movement3d_test.translation_delta_to_absolute (50, 100, -1.0, 1.0), 1.0);
+
+
+    //    50<-- x         50 points to left
+    // -1       0        1
+    // | ------ | ------ |
+    ASSERT_FLOAT_EQ (
+    movement3d_test.translation_delta_to_absolute (-50, 100, -1.0, 1.0), -1.0);
+}

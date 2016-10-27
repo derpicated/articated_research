@@ -45,11 +45,11 @@ Window::~Window () {
 }
 
 QSize Window::minimumSizeHint () const {
-    return QSize (100, 100);
+    return _layout_app.minimumSize ();
 }
 
 QSize Window::sizeHint () const {
-    return QSize (500, 500);
+    return _layout_app.sizeHint ();
 }
 
 void Window::keyPressEvent (QKeyEvent* e) {

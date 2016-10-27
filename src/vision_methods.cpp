@@ -36,8 +36,75 @@ const std::map<unsigned int, cv::Point2f>& markers) {
     return _reference_markers;
 }
 
-movement3d classification (const std::map<unsigned int, cv::Point2f>& markers) {
-    (void)markers;
+movement3d vision_methods::classification (const cv::Mat& image) {
+    (void)image;
+    movement3d empty_tmp;
+    // run image through:
+    // - preprocessing
+    // - segmentation
+    // - extraction
+    // - classification
+    // and return the movement
+    return empty_tmp;
+}
+
+movement3d vision_methods::classification (const std::map<unsigned int, cv::Point2f>& markers) {
     movement3d movement;
+    std::vector<cv::Point2f> ref_points, mark_points;
+    // convert reference and markers to matching vectors
+    for (auto const& marker : _reference_markers) {
+        if (markers.find (marker.first) != markers.end ()) {
+            ref_points.push_back (_reference_markers.at (marker.first));
+            mark_points.push_back (markers.at (marker.first));
+        }
+    }
+
+    // find homography between points
+    cv::Mat H = cv::findHomography (ref_points, mark_points);
+
+    // decompose and find information that is in the transformation matrix
+    std::vector<cv::Mat> rotations, translations, normals;
+    cv::decomposeHomographyMat (H, _K, rotations, translations, cv::noArray ());
+
+    // set x, y, z if available
+    // clang-format off
+    float default_rot_val[9] = {
+        1, 0, 0,
+        0, 1, 0,
+        0, 0, 1
+    };
+    // clang-format on
+    cv::Mat default_rot_mat = cv::Mat (3, 3, CV_32F, default_rot_val);
+    // x
+    if (rotations.size () >= 1) {
+        movement.rot_x (rotations[1]);
+    } else {
+        movement.rot_x (default_rot_mat);
+    }
+
+    // y
+    if (rotations.size () >= 2) {
+        movement.rot_x (rotations[2]);
+    } else {
+        movement.rot_x (default_rot_mat);
+    }
+    // z
+    if (rotations.size () >= 1) {
+        movement.rot_x (rotations[3]);
+    } else {
+        movement.rot_x (default_rot_mat);
+    }
+
+    // set translation
+    //    a b c  c: Tx
+    // H: d e f  f: Ty
+    //    0 0 1
+    // x:
+    movement.trans_x (H.at<float> (1, 3));
+    // y:
+    movement.trans_y (H.at<float> (2, 3));
+
+    // set scale
+    movement.scale (1); // for now
     return movement;
 }

@@ -3,9 +3,11 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+#include <QGridLayout>
 #include <QKeyEvent>
-#include <QSlider>
+#include <QTimer>
 
+#include "acquisition.hpp"
 #include "augmentation_widget.h"
 
 namespace Ui {
@@ -19,13 +21,21 @@ class Window : public QWidget {
     explicit Window (QWidget* parent = 0);
     ~Window ();
 
+    QSize minimumSizeHint () const;
+    QSize sizeHint () const;
+
     public slots:
+    void timeout ();
 
     protected:
     void keyPressEvent (QKeyEvent* event);
 
     private:
-    augmentation_widget aug_widget;
+    unsigned int _framerate = 30;
+    acquisition _acquisition;
+    QTimer _frame_timer;
+    QGridLayout _layout;
+    augmentation_widget _augmentation;
 };
 
 #endif // WINDOW_H

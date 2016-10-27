@@ -5,7 +5,6 @@
 
 #include <QOpenGLFunctions>
 #include <QOpenGLWidget>
-#include <QTimer>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgcodecs.hpp>
@@ -27,6 +26,7 @@ class augmentation_widget : public QOpenGLWidget, protected QOpenGLFunctions {
     QSize sizeHint () const;
 
     public slots:
+    void setBackground (GLvoid* image, GLsizei width, GLsizei height);
     void setScale (float factor);
     void setXPosition (float location);
     void setYPosition (float location);
@@ -41,7 +41,6 @@ class augmentation_widget : public QOpenGLWidget, protected QOpenGLFunctions {
     void zRotationChanged (int angle);
 
     private:
-    const unsigned int _framerate = 30;
     float _scale_factor;
     float _x_pos;
     float _y_pos;
@@ -50,7 +49,6 @@ class augmentation_widget : public QOpenGLWidget, protected QOpenGLFunctions {
     int _z_rot;
     cv::VideoCapture _cap;
     GLuint _texture_background;
-    QTimer* _frame_timer;
 };
 
 #endif // AUGMENTATION_WIDGET_H

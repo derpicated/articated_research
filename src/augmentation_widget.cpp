@@ -2,7 +2,6 @@
 
 #include "augmentation_widget.h"
 #include <GL/gl.h>
-#include <QDebug>
 
 augmentation_widget::augmentation_widget (QWidget* parent)
 : QOpenGLWidget (parent)
@@ -12,15 +11,10 @@ augmentation_widget::augmentation_widget (QWidget* parent)
 , _x_rot (0)
 , _y_rot (0)
 , _z_rot (0)
-, _cap (0)
-, _frame_timer (new QTimer (this)) {
-    connect (_frame_timer, SIGNAL (timeout ()), this, SLOT (update ()));
-    _frame_timer->setInterval (1000 / _framerate);
-    _frame_timer->start ();
+, _cap (0) {
 }
 
 augmentation_widget::~augmentation_widget () {
-    delete _frame_timer;
 }
 
 QSize augmentation_widget::minimumSizeHint () const {
@@ -34,6 +28,15 @@ QSize augmentation_widget::sizeHint () const {
 static void qNormalizeAngle (int& angle) {
     while (angle < 0) angle += 360;
     while (angle > 360) angle -= 360;
+}
+
+void augmentation_widget::setBackground (GLvoid* image, GLsizei width, GLsizei height) {
+    // create background texture
+    glBindTexture (GL_TEXTURE_2D, _texture_background);
+    // TODO: maybe move these to init?
+    glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, image);
 }
 
 void augmentation_widget::setScale (float scale) {
@@ -107,20 +110,6 @@ void augmentation_widget::paintGL () {
     // QOpenGLFunctions* f = QOpenGLContext::currentContext ()->functions ();
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity ();
-
-    cv::Mat frame;
-    _cap >> frame;
-    if (frame.empty ()) {
-        printf ("empty video frame"); // TODO throw error here
-        return;
-    }
-    // create background texture
-    glBindTexture (GL_TEXTURE_2D, _texture_background);
-    glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB, frame.cols, frame.rows, 0, GL_BGR,
-    GL_UNSIGNED_BYTE, frame.ptr ());
-
 
     // draw background
     glTranslatef (0.0, 0.0, -10.0);

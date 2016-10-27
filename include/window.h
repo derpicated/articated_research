@@ -3,8 +3,11 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+#include <QBoxLayout>
 #include <QGridLayout>
 #include <QKeyEvent>
+#include <QPushButton>
+#include <QStatusBar>
 #include <QTimer>
 
 #include "acquisition.hpp"
@@ -26,6 +29,9 @@ class Window : public QWidget {
 
     public slots:
     void timeout ();
+    void btn_pause_clicked ();
+    void btn_reference_clicked ();
+    void btn_input_clicked ();
 
     protected:
     void keyPressEvent (QKeyEvent* event);
@@ -34,7 +40,17 @@ class Window : public QWidget {
     unsigned int _framerate = 30;
     acquisition _acquisition;
     QTimer _frame_timer;
-    QGridLayout _layout;
+
+    // ui elements
+    QWidget _holder_layout_img;
+    QWidget _holder_layout_btn;
+    QBoxLayout _layout_app;
+    QGridLayout _layout_img;
+    QBoxLayout _layout_btn;
+    QPushButton _btn_pause;
+    QPushButton _btn_reference;
+    QPushButton _btn_input;
+    QStatusBar _statusbar;
     augmentation_widget _augmentation;
 };
 

@@ -54,6 +54,9 @@ void movement3d::rot_x (const cv::Mat& x) {
 cv::Mat movement3d::rot_x () {
     return _rotation_x;
 }
+void movement3d::rot_x_gl (GLfloat gl[GL44_SIZE]) {
+    mat33_to_glfloat44 (_rotation_x, gl);
+}
 
 void movement3d::rot_y (const cv::Mat& y) {
     _rotation_y = y;
@@ -61,12 +64,18 @@ void movement3d::rot_y (const cv::Mat& y) {
 cv::Mat movement3d::rot_y () {
     return _rotation_y;
 }
+void movement3d::rot_y_gl (GLfloat gl[GL44_SIZE]) {
+    mat33_to_glfloat44 (_rotation_y, gl);
+}
 
 void movement3d::rot_z (const cv::Mat& z) {
     _rotation_z = z;
 }
 cv::Mat movement3d::rot_z () {
     return _rotation_z;
+}
+void movement3d::rot_z_gl (GLfloat gl[GL44_SIZE]) {
+    mat33_to_glfloat44 (_rotation_z, gl);
 }
 
 // translation

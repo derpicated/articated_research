@@ -43,6 +43,12 @@ class movement3d {
     cv::Mat rot_x ();
 
     /**
+     * rotation in x direction
+     * @param gl is the output array
+     */
+    void rot_x_gl (GLfloat gl[GL44_SIZE]);
+
+    /**
      * rotation in y direction
      * @param y rotation matrix
      */
@@ -55,6 +61,12 @@ class movement3d {
     cv::Mat rot_y ();
 
     /**
+     * rotation in y direction
+     * @param gl is the output array
+     */
+    void rot_y_gl (GLfloat gl[GL44_SIZE]);
+
+    /**
      * rotation in z direction
      * @param z rotation matrix
      */
@@ -65,6 +77,12 @@ class movement3d {
      * @return z rotation matrix
      */
     cv::Mat rot_z ();
+
+    /**
+     * rotation in z direction
+     * @param gl is the output array
+     */
+    void rot_z_gl (GLfloat gl[GL44_SIZE]);
 
     void trans_x (const float translation_x);
     float trans_x ();

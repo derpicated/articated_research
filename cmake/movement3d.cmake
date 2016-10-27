@@ -6,7 +6,7 @@ set(MOVEMENT3D_SRC
 )
 
 add_library( movement3d SHARED ${MOVEMENT3D_SRC} ${MOVEMENT3D_INC} )
-target_link_libraries( movement3d ${OpenCV_LIBS} )
+target_link_libraries( movement3d ${OpenCV_LIBS} GL )
 target_include_directories ( movement3d PUBLIC ${INCLUDE_DIR} )
 
 target_compile_options(movement3d PRIVATE -std=c++11 -Wall -Wextra)

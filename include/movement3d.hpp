@@ -1,6 +1,7 @@
 #ifndef movement3d_HPP
 #define movement3d_HPP
 
+#include <GL/gl.h>
 #include <opencv2/opencv.hpp>
 
 class movement3d {
@@ -16,8 +17,18 @@ class movement3d {
     float _scale;
 
     public:
+    static const unsigned int GL44_SIZE = 16;
+
     movement3d ();
     ~movement3d ();
+
+    /**
+     * convert 3x3 opencv matrix to a 4x4 opengl matrix
+     * @param  matrix 3x3 opencv matrix
+     * @param gl is the output GLfloat array[movement3d::GL44_SIZE]
+     * (size won't be checked!)
+     */
+    void mat33_to_glfloat44 (cv::Mat& mat, GLfloat gl[GL44_SIZE]);
 
     /**
      * rotation in x direction

@@ -66,6 +66,18 @@ movement3d vision_methods::classification (const std::map<unsigned int, cv::Poin
     std::vector<cv::Mat> rotations, translations, normals;
     cv::decomposeHomographyMat (H, _K, rotations, translations, cv::noArray ());
 
+    // convert to floats
+    H.convertTo (H, CV_32F);
+    for (auto rotation : rotations) {
+        rotation.convertTo (rotation, CV_32F);
+    }
+    for (auto translation : translations) {
+        translation.convertTo (translation, CV_32F);
+    }
+    for (auto normal : normals) {
+        normal.convertTo (normal, CV_32F);
+    }
+
     // set x, y, z if available
     // clang-format off
     float default_rot_val[9] = {
@@ -77,22 +89,21 @@ movement3d vision_methods::classification (const std::map<unsigned int, cv::Poin
     cv::Mat default_rot_mat = cv::Mat (3, 3, CV_32F, default_rot_val);
     // x
     if (rotations.size () >= 1) {
-        movement.rot_x (rotations[1]);
+        movement.rot_x (rotations[0]);
     } else {
         movement.rot_x (default_rot_mat);
     }
-
     // y
     if (rotations.size () >= 2) {
-        movement.rot_x (rotations[2]);
+        movement.rot_y (rotations[1]);
     } else {
-        movement.rot_x (default_rot_mat);
+        movement.rot_y (default_rot_mat);
     }
     // z
     if (rotations.size () >= 1) {
-        movement.rot_x (rotations[3]);
+        movement.rot_z (rotations[2]);
     } else {
-        movement.rot_x (default_rot_mat);
+        movement.rot_z (default_rot_mat);
     }
 
     // set translation
@@ -100,9 +111,9 @@ movement3d vision_methods::classification (const std::map<unsigned int, cv::Poin
     // H: d e f  f: Ty
     //    0 0 1
     // x:
-    movement.trans_x (H.at<float> (1, 3));
+    movement.trans_x (H.at<float> (cv::Point (2, 0)));
     // y:
-    movement.trans_y (H.at<float> (2, 3));
+    movement.trans_y (H.at<float> (cv::Point (2, 1)));
 
     // set scale
     movement.scale (1); // for now

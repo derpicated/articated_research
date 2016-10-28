@@ -1,5 +1,5 @@
 project(articated_app)
-find_package(Qt5 REQUIRED Core Gui Widgets OpenGL)
+find_package(Qt5 REQUIRED Core Gui Widgets Multimedia OpenGL)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set( articated_SOURCES   ${SRC_DIR}/main.cpp ${SRC_DIR}/window.cpp )
@@ -17,4 +17,4 @@ ${QT_LIBRARIES} GL opencv_core opencv_highgui
         augmentation
 )
 
-qt5_use_modules(articated_app Core Gui Widgets OpenGL)
+qt5_use_modules(articated_app Core Gui Widgets Multimedia OpenGL)

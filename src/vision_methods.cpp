@@ -168,14 +168,15 @@ const cv::Mat& image_reference) {
 std::map<unsigned int, cv::Point2f> vision_methods::set_reference (
 const std::map<unsigned int, cv::Point2f>& marker_points) {
     if (marker_points.size () < _minimal_ref_points) {
-        throw std::length_error ("too few reference points");
+        throw std::length_error ("too few reference points; found " +
+        std::to_string (marker_points.size ()) + " need " +
+        std::to_string (_minimal_ref_points));
     }
     _reference_markers = marker_points;
     return _reference_markers;
 }
 
 movement3d vision_methods::classification (const cv::Mat& image) {
-    (void)image;
     movement3d movement;
     cv::Mat preprocessed, segmented;
     preprocessed = preprocessing (image);
@@ -197,7 +198,11 @@ const std::map<unsigned int, cv::Point2f>& marker_points) {
             mark_points.push_back (marker_points.at (marker.first));
         }
     }
-
+    // check size
+    if (ref_points.size () < _minimal_ref_points || mark_points.size () < _minimal_ref_points) {
+        throw std::length_error (
+        "too few match points; found " + std::to_string (ref_points.size ()));
+    }
     // find homography between points
     cv::Mat H = cv::findHomography (ref_points, mark_points);
 

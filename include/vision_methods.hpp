@@ -11,7 +11,7 @@ class vision_methods {
     const int _ksize_y                     = 21;
     const int _sigma_x                     = 2;
     const int _sigma_y                     = 2;
-    const unsigned int _minimal_ref_points = 2;
+    const unsigned int _minimal_ref_points = 3;
     const unsigned int _MIN_MARKER_ID      = 2;
     const unsigned int _MAX_MARKER_ID      = 9;
     const int _BLOB_SIZE_RATIO = 4; // ratio between size and whitespace

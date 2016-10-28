@@ -24,7 +24,7 @@ before_install:
 
 install:
     - sudo apt-get -qq update
-    - if [ "$QT_BASE" = "57" ]; then sudo apt-get install -qq qt57base; source /opt/qt57/bin/qt57-env.sh; fi
+    - if [ "$QT_BASE" = "57" ]; then sudo apt-get install -qq qt57base qt57multimedia; source /opt/qt57/bin/qt57-env.sh; fi
     - sudo apt-get install -qq mesa-common-dev
     - sudo apt-get install -qq libgl1-mesa-dev
     - sudo apt-get install -qq libgtk2.0-dev

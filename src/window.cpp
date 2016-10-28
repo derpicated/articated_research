@@ -112,6 +112,7 @@ void Window::btn_input_clicked () {
     // fill list of cameras
     QList<QCameraInfo> cameras = QCameraInfo::availableCameras ();
     if (cameras.size () > 0) {
+        box_camid.addItem ("Select Camera");
         foreach (const QCameraInfo& cameraInfo, cameras) {
             box_camid.addItem (cameraInfo.description ());
         }

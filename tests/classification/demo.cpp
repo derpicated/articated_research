@@ -61,39 +61,7 @@ std::map<unsigned int, cv::Point2f> match) {
 
     test_vm.set_reference (ref);
     movement = test_vm.classification (match);
-
-    std::cout << "-----------------------------------" << std::endl;
-
-    std::cout << "rot x: " << movement.rot_x () << std::endl;
-    std::cout << "rot y: " << movement.rot_y () << std::endl;
-    std::cout << "rot z: " << movement.rot_z () << std::endl;
-    std::cout << std::endl;
-
-    GLfloat gl[movement3d::GL44_SIZE];
-    std::cout << "rot gl x: " << std::endl;
-    movement.rot_x_gl (gl);
-    for (unsigned int i = 0; i < movement3d::GL44_SIZE; i++) {
-        std::cout << gl[i] << ", ";
-    }
-    std::cout << std::endl;
-    std::cout << "rot gl y: " << std::endl;
-    movement.rot_y_gl (gl);
-    for (unsigned int i = 0; i < movement3d::GL44_SIZE; i++) {
-        std::cout << gl[i] << ", ";
-    }
-    std::cout << std::endl;
-    std::cout << "rot gl z: " << std::endl;
-    movement.rot_z_gl (gl);
-    for (unsigned int i = 0; i < movement3d::GL44_SIZE; i++) {
-        std::cout << gl[i] << ", ";
-    }
-    std::cout << std::endl;
-    std::cout << std::endl;
-
-    std::cout << "translation x: " << movement.trans_x () << std::endl;
-    std::cout << "translation y: " << movement.trans_y () << std::endl;
-    std::cout << std::endl;
-
-    std::cout << "scale: " << movement.scale () << std::endl;
-    std::cout << "-----------------------------------" << std::endl;
+    std::cout << "--------------------------------------" << std::endl;
+    std::cout << movement;
+    std::cout << "--------------------------------------" << std::endl;
 }

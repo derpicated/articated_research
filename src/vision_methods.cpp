@@ -156,41 +156,45 @@ std::map<unsigned int, cv::Point2f>& markers) {
 
 std::map<unsigned int, cv::Point2f> vision_methods::set_reference (
 const cv::Mat& image_reference) {
-    (void)image_reference;
-    throw std::runtime_error (
-    "missing implementation of set_reference from image");
-    return {};
+    cv::Mat preprocessed, segmented;
+    preprocessed = preprocessing (image_reference);
+    segmented    = segmentation (preprocessed);
+    std::map<unsigned int, cv::Point2f> marker_points;
+    extraction (segmented, marker_points);
+    set_reference (marker_points);
+    return _reference_markers;
 }
 
 std::map<unsigned int, cv::Point2f> vision_methods::set_reference (
-const std::map<unsigned int, cv::Point2f>& markers) {
-    if (markers.size () < _minimal_ref_points) {
+const std::map<unsigned int, cv::Point2f>& marker_points) {
+    if (marker_points.size () < _minimal_ref_points) {
         throw std::length_error ("too few reference points");
     }
-    _reference_markers = markers;
+    _reference_markers = marker_points;
     return _reference_markers;
 }
 
 movement3d vision_methods::classification (const cv::Mat& image) {
     (void)image;
-    movement3d empty_tmp;
-    // run image through:
-    // - preprocessing
-    // - segmentation
-    // - extraction
-    // - classification
-    // and return the movement
-    return empty_tmp;
+    movement3d movement;
+    cv::Mat preprocessed, segmented;
+    preprocessed = preprocessing (image);
+    segmented    = segmentation (preprocessed);
+    std::map<unsigned int, cv::Point2f> marker_points;
+    extraction (segmented, marker_points);
+    movement = classification (marker_points);
+    return movement;
 }
 
-movement3d vision_methods::classification (const std::map<unsigned int, cv::Point2f>& markers) {
+movement3d vision_methods::classification (
+const std::map<unsigned int, cv::Point2f>& marker_points) {
     movement3d movement;
     std::vector<cv::Point2f> ref_points, mark_points;
     // convert reference and markers to matching vectors
     for (auto const& marker : _reference_markers) {
-        if (markers.find (marker.first) != markers.end ()) {
+        if (marker_points.find (marker.first) != marker_points.end ()) {
             ref_points.push_back (_reference_markers.at (marker.first));
-            mark_points.push_back (markers.at (marker.first));
+            mark_points.push_back (marker_points.at (marker.first));
         }
     }
 

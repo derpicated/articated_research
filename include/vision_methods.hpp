@@ -96,11 +96,11 @@ class vision_methods {
 
     /**
      * set the reference from key points
-     * @param markers are the reference markers
-     * @return returns the reference markers
+     * @param marker_points are the reference marker_points
+     * @return returns the reference marker_points
      */
     std::map<unsigned int, cv::Point2f> set_reference (
-    const std::map<unsigned int, cv::Point2f>& markers);
+    const std::map<unsigned int, cv::Point2f>& marker_points);
 
     /**
      * classify the markers and calculate the movement of the image
@@ -111,10 +111,10 @@ class vision_methods {
 
     /**
      * classify the markers and calculate the movement of the image
-     * @param markers are the key points (the marker locations)
+     * @param marker_points are the key points (the marker locations)
      * @return returns the movement
      */
-    movement3d classification (const std::map<unsigned int, cv::Point2f>& markers);
+    movement3d classification (const std::map<unsigned int, cv::Point2f>& marker_points);
 };
 
 

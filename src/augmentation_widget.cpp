@@ -10,8 +10,7 @@ augmentation_widget::augmentation_widget (QWidget* parent)
 , _y_pos (0.0f)
 , _x_rot (0)
 , _y_rot (0)
-, _z_rot (0)
-, _cap (0) {
+, _z_rot (0) {
 }
 
 augmentation_widget::~augmentation_widget () {

@@ -47,7 +47,6 @@ class augmentation_widget : public QOpenGLWidget, protected QOpenGLFunctions {
     int _x_rot;
     int _y_rot;
     int _z_rot;
-    cv::VideoCapture _cap;
     GLuint _texture_background;
 };
 

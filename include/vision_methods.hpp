@@ -2,6 +2,7 @@
 #define VISION_METHODS_HPP
 
 #include "movement3d.hpp"
+#include <map>
 #include <opencv2/opencv.hpp>
 
 class vision_methods {
@@ -11,6 +12,9 @@ class vision_methods {
     const int _sigma_x                     = 2;
     const int _sigma_y                     = 2;
     const unsigned int _minimal_ref_points = 2;
+    const unsigned int _MIN_MARKER_ID      = 2;
+    const unsigned int _MAX_MARKER_ID      = 9;
+    const int _BLOB_SIZE_RATIO = 4; // ratio between size and whitespace
     std::map<unsigned int, cv::Point2f> _reference_markers = {};
     // set up a virtual camera
     const float _f = 100, _w = 500, _h = 500;
@@ -24,6 +28,35 @@ class vision_methods {
         0,  _f, _h/2,
         0,  0,  1   );
     // clang-format on
+
+    /**
+    * find groups from a vector of keypoints, based on proximity
+    * @param    key_points a vector of features
+    * @param    potential_markers ouptut containing groups of points
+    * @return
+    */
+    void extract_groups (std::vector<cv::KeyPoint> key_points,
+    std::vector<std::vector<cv::KeyPoint>>& potential_markers);
+
+    /**
+    * recursively link all blobs in group
+    * @param    neighbours contains all grouped neighbours per KeyPoint
+    * @param    potential_marker contains all blobs for one potential marker
+    * @param    point the keypoint thats under inspection
+    * @return
+    */
+    void extract_groups_link (std::map<cv::KeyPoint, std::vector<cv::KeyPoint>>& neighbours,
+    std::vector<cv::KeyPoint>& potential_marker,
+    const cv::KeyPoint& point);
+
+    /**
+    * extract markers from a vector of marker candidates
+    * @param    potential_markers a vector of groups of keypoints
+    * @param    markers output map of MarkerID, MarkerLocation
+    * @return
+    */
+    void extract_markers (std::vector<std::vector<cv::KeyPoint>>& potential_markers,
+    std::map<unsigned int, cv::Point2f>& markers);
 
     public:
     vision_methods ();
@@ -45,6 +78,14 @@ class vision_methods {
      * @return          segmented image
      */
     cv::Mat segmentation (const cv::Mat& image_in);
+
+    /**
+     * extract features image
+     * @param  image_in image to be segmented
+     * @param  markers output map for found markers
+     * @return          segmented image
+     */
+    cv::Mat extraction (const cv::Mat& image_in, std::map<unsigned int, cv::Point2f>& markers);
 
     /**
      * set the reference from image

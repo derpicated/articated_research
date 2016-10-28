@@ -21,7 +21,7 @@ TEST (acquisition_file_fail, acquisition) {
 TEST (acquisition_file_no_fail_video, acquisition) {
     acquisition ac_test;
     ASSERT_NO_THROW (ac_test.source (
-    std::string (SAMPLES_DIR) + std::string ("/3_marker_with_border.webm")))
+    std::string (SAMPLES_DIR) + std::string ("/3_markers_good.webm")))
     << "the sample video file cannot be read";
 }
 

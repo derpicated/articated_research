@@ -1,6 +1,15 @@
 // window.cpp
 
+#ifndef SAMPLES_DIR
+#define SAMPLES_DIR ""
+#endif
+
 #include "window.h"
+#include <QComboBox>
+#include <QDialog>
+#include <QFileDialog>
+#include <QLabel>
+#include <QLineEdit>
 
 Window::Window (QWidget* parent)
 : QWidget (parent)
@@ -26,7 +35,7 @@ Window::Window (QWidget* parent)
     _layout_btn.addWidget (&_btn_reference);
     _layout_btn.addWidget (&_btn_input);
 
-    _statusbar.showMessage ("Welcome");
+    _statusbar.showMessage ("Welcome, please select an input");
     _statusbar.setSizeGripEnabled (false);
 
     connect (&_frame_timer, SIGNAL (timeout ()), this, SLOT (timeout ()));
@@ -36,9 +45,6 @@ Window::Window (QWidget* parent)
 
     _frame_timer.setInterval (1000 / _framerate);
     _frame_timer.start ();
-
-    _acquisition.source (
-    std::string (SAMPLES_DIR) + std::string ("/3_markers_good.webm"));
 }
 
 Window::~Window () {
@@ -60,7 +66,14 @@ void Window::keyPressEvent (QKeyEvent* e) {
 }
 
 void Window::timeout () {
-    cv::Mat frame = _acquisition.capture ();
+    cv::Mat frame;
+    try {
+        frame = _acquisition.capture ();
+        // call vision here
+    } catch (const std::runtime_error& e) {
+        _statusbar.showMessage ("Failed to capture from input");
+        frame = cv::Mat (1000, 1000, CV_8UC3, cv::Scalar (0, 0, 0));
+    }
     _augmentation.setBackground (frame.ptr (), frame.cols, frame.rows);
     _augmentation.update ();
 }
@@ -82,5 +95,38 @@ void Window::btn_reference_clicked () {
 
 void Window::btn_input_clicked () {
     // select input here
+    QDialog dialog (this);
+    QBoxLayout layout_dialog (QBoxLayout::TopToBottom, &dialog);
+    QPushButton btn_open_filebrowser ("Open File Browser");
+    QComboBox box_camid;
+    QLabel label1 ("Specify camera ID:");
+    QLabel label2 ("Or choose a file:");
+
+    dialog.setWindowTitle ("Select Input");
+    layout_dialog.addWidget (&label1);
+    layout_dialog.addWidget (&box_camid);
+    layout_dialog.addWidget (&label2);
+    layout_dialog.addWidget (&btn_open_filebrowser);
+
+    connect (&box_camid, SIGNAL (currentIndexChanged (int)), &dialog, SLOT (close ()));
+    connect (&box_camid, SIGNAL (currentIndexChanged (int)), this,
+    SLOT (dialog_box_camid_indexchanged (int)));
+    connect (&btn_open_filebrowser, SIGNAL (clicked ()), &dialog, SLOT (close ()));
+    connect (&btn_open_filebrowser, SIGNAL (clicked ()), this,
+    SLOT (dialog_btn_filebrowser_clicked ()));
+
+    dialog.exec ();
+}
+
+void Window::dialog_btn_filebrowser_clicked () {
+    // test file
+    std::string file_name = QFileDialog::getOpenFileName (this,
+    tr ("Open Video"), SAMPLES_DIR,
+    tr ("Videos (*.webm)")).toStdString ();
+    _acquisition.source (file_name);
+    _statusbar.showMessage (file_name.c_str (), 2000);
+}
+
+void Window::dialog_box_camid_indexchanged (int idx) {
     ;
 }

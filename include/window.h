@@ -12,6 +12,8 @@
 
 #include "acquisition.hpp"
 #include "augmentation_widget.h"
+#include "movement3d.hpp"
+#include "vision_methods.hpp"
 
 namespace Ui {
 class Window;
@@ -39,8 +41,10 @@ class Window : public QWidget {
     void keyPressEvent (QKeyEvent* event);
 
     private:
-    unsigned int _framerate = 30;
+    unsigned int _framerate = 3;
+    vision_methods _vision_methods;
     acquisition _acquisition;
+
     QTimer _frame_timer;
 
     // ui elements

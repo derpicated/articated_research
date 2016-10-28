@@ -11,7 +11,12 @@ add_executable( articated_app ${articated_SOURCES} ${articated_MOC})
 add_definitions(-DSAMPLES_DIR="${SAMPLES_DIR}")
 target_link_libraries(
     articated_app
-${QT_LIBRARIES} GL opencv_core opencv_highgui
+        ${QT_LIBRARIES}
+        GL
+        opencv_core
+        opencv_highgui
+        movement3d
+        vision_methods
         acquisition
         vision_methods
         augmentation

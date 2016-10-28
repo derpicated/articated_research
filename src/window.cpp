@@ -66,13 +66,21 @@ void Window::keyPressEvent (QKeyEvent* e) {
 }
 
 void Window::timeout () {
-    cv::Mat frame;
+    cv::Mat frame, preprocessed, segmented;
+    std::map<unsigned int, cv::Point2f> marker_points;
+    movement3d movement;
     try {
-        frame = _acquisition.capture ();
-        // call vision here
+        frame        = _acquisition.capture ();
+        preprocessed = _vision_methods.preprocessing (frame);
+        segmented    = _vision_methods.segmentation (preprocessed);
+        _vision_methods.extraction (segmented, marker_points);
+        movement = _vision_methods.classification (marker_points);
+    } catch (const std::length_error& e) {
+        _statusbar.showMessage (std::string (e.what ()).c_str (), 100);
     } catch (const std::runtime_error& e) {
         _statusbar.showMessage ("Select Input");
         frame = cv::Mat (1000, 1000, CV_8UC3, cv::Scalar (0, 0, 0));
+    } catch (...) {
     }
     _augmentation.setBackground (frame.ptr (), frame.cols, frame.rows);
     _augmentation.update ();
@@ -89,8 +97,13 @@ void Window::btn_pause_clicked () {
 }
 
 void Window::btn_reference_clicked () {
-    // call vision here
-    ;
+    try {
+        _vision_methods.set_reference (_acquisition.capture ());
+    } catch (const std::length_error& e) {
+        _statusbar.showMessage (std::string (e.what ()).c_str (), 1000);
+    } catch (const std::runtime_error& e) {
+        _statusbar.showMessage ("Error while setting reference");
+    }
 }
 
 void Window::btn_input_clicked () {

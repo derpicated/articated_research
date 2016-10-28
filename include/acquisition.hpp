@@ -6,7 +6,7 @@
 
 class acquisition {
     private:
-    cv::VideoCapture _capture = 0;
+    cv::VideoCapture _capture;
 
     /**
      * handle opencv errors

@@ -144,5 +144,5 @@ void Window::dialog_btn_filebrowser_clicked () {
 
 void Window::dialog_box_camid_indexchanged (int idx) {
     _acquisition.source (idx - 1);
-    _statusbar.showMessage (QString ("Selected camera #") + QString (idx), 2000);
+    _statusbar.showMessage (QString ("Selected camera #") + QString::number (idx), 2000);
 }

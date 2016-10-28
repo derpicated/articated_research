@@ -41,7 +41,7 @@ class Window : public QWidget {
     void keyPressEvent (QKeyEvent* event);
 
     private:
-    unsigned int _framerate = 3;
+    unsigned int _framerate = 30;
     vision_methods _vision_methods;
     acquisition _acquisition;
 

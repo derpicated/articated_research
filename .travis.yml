@@ -37,6 +37,6 @@ install:
 script:
     - mkdir build
     - cd build
-    - cmake .. -DCMAKE_BUILD_TYPE=Debug -DTESTS=ON
+    - cmake .. -DCMAKE_BUILD_TYPE=Debug -DTESTS=ON -DQt5_DIR="/opt/qt57/lib/cmake/Qt5/"
     - make all -j2
     - make check

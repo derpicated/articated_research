@@ -1,5 +1,5 @@
 #include "vision_methods.hpp"
-//#include <oepncv2/features2d.hpp>
+#include "movement3d.hpp"
 #include <opencv2/opencv.hpp>
 #include <string>
 
@@ -154,17 +154,107 @@ std::map<unsigned int, cv::Point2f>& markers) {
     }
 }
 
-std::map<unsigned int, cv::KeyPoint> vision_methods::set_reference (cv::Mat& image_reference) {
-    (void)image_reference;
-    return {};
+std::map<unsigned int, cv::Point2f> vision_methods::set_reference (
+const cv::Mat& image_reference) {
+    cv::Mat preprocessed, segmented;
+    preprocessed = preprocessing (image_reference);
+    segmented    = segmentation (preprocessed);
+    std::map<unsigned int, cv::Point2f> marker_points;
+    extraction (segmented, marker_points);
+    set_reference (marker_points);
+    return _reference_markers;
 }
 
-std::map<unsigned int, cv::KeyPoint> vision_methods::set_reference_keypoints (
-const std::map<unsigned int, cv::KeyPoint>& keypoints) {
-    (void)keypoints;
-    return {};
+std::map<unsigned int, cv::Point2f> vision_methods::set_reference (
+const std::map<unsigned int, cv::Point2f>& marker_points) {
+    if (marker_points.size () < _minimal_ref_points) {
+        throw std::length_error ("too few reference points");
+    }
+    _reference_markers = marker_points;
+    return _reference_markers;
 }
 
-void classification (const std::map<unsigned int, cv::KeyPoint>& markers) {
-    (void)markers;
+movement3d vision_methods::classification (const cv::Mat& image) {
+    (void)image;
+    movement3d movement;
+    cv::Mat preprocessed, segmented;
+    preprocessed = preprocessing (image);
+    segmented    = segmentation (preprocessed);
+    std::map<unsigned int, cv::Point2f> marker_points;
+    extraction (segmented, marker_points);
+    movement = classification (marker_points);
+    return movement;
+}
+
+movement3d vision_methods::classification (
+const std::map<unsigned int, cv::Point2f>& marker_points) {
+    movement3d movement;
+    std::vector<cv::Point2f> ref_points, mark_points;
+    // convert reference and markers to matching vectors
+    for (auto const& marker : _reference_markers) {
+        if (marker_points.find (marker.first) != marker_points.end ()) {
+            ref_points.push_back (_reference_markers.at (marker.first));
+            mark_points.push_back (marker_points.at (marker.first));
+        }
+    }
+
+    // find homography between points
+    cv::Mat H = cv::findHomography (ref_points, mark_points);
+
+    // decompose and find information that is in the transformation matrix
+    std::vector<cv::Mat> rotations, translations, normals;
+    cv::decomposeHomographyMat (H, _K, rotations, translations, cv::noArray ());
+
+    // convert to floats
+    H.convertTo (H, CV_32F);
+    for (auto rotation : rotations) {
+        rotation.convertTo (rotation, CV_32F);
+    }
+    for (auto translation : translations) {
+        translation.convertTo (translation, CV_32F);
+    }
+    for (auto normal : normals) {
+        normal.convertTo (normal, CV_32F);
+    }
+
+    // set x, y, z if available
+    // clang-format off
+    float default_rot_val[9] = {
+        1, 0, 0,
+        0, 1, 0,
+        0, 0, 1
+    };
+    // clang-format on
+    cv::Mat default_rot_mat = cv::Mat (3, 3, CV_32F, default_rot_val);
+    // x
+    if (rotations.size () >= 1) {
+        movement.rot_x (rotations[0]);
+    } else {
+        movement.rot_x (default_rot_mat);
+    }
+    // y
+    if (rotations.size () >= 2) {
+        movement.rot_y (rotations[1]);
+    } else {
+        movement.rot_y (default_rot_mat);
+    }
+    // z
+    if (rotations.size () >= 1) {
+        movement.rot_z (rotations[2]);
+    } else {
+        movement.rot_z (default_rot_mat);
+    }
+
+    // set translation
+    //    a b c  c: Tx
+    // H: d e f  f: Ty
+    //    0 0 1
+    // x:
+    movement.trans_x (H.at<float> (cv::Point (2, 0)));
+    // y:
+    movement.trans_y (H.at<float> (cv::Point (2, 1)));
+
+    // set scale
+    movement.scale (1); // for now
+    return movement;
 }

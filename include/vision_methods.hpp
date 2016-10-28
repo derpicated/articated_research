@@ -1,19 +1,33 @@
 #ifndef VISION_METHODS_HPP
 #define VISION_METHODS_HPP
 
+#include "movement3d.hpp"
 #include <map>
 #include <opencv2/opencv.hpp>
 
 class vision_methods {
     private:
-    const int _ksize_x                = 21;
-    const int _ksize_y                = 21;
-    const int _sigma_x                = 2;
-    const int _sigma_y                = 2;
-    const unsigned int _MIN_MARKER_ID = 2;
-    const unsigned int _MAX_MARKER_ID = 9;
-    const int _BLOB_SIZE_RATIO        = 4; // ratio between size and whitespace
-    std::map<unsigned int, cv::KeyPoint> _reference_markers = {};
+    const int _ksize_x                     = 21;
+    const int _ksize_y                     = 21;
+    const int _sigma_x                     = 2;
+    const int _sigma_y                     = 2;
+    const unsigned int _minimal_ref_points = 2;
+    const unsigned int _MIN_MARKER_ID      = 2;
+    const unsigned int _MAX_MARKER_ID      = 9;
+    const int _BLOB_SIZE_RATIO = 4; // ratio between size and whitespace
+    std::map<unsigned int, cv::Point2f> _reference_markers = {};
+    // set up a virtual camera
+    const float _f = 100, _w = 500, _h = 500;
+    // intrinsic camera matrix
+    // |fx 0  cx| (cx, cy) is a principal point
+    // |0  fy cy|          that is usually at the image center
+    // |0  0  1 | (fx, fy) are the focal lengths expressed in pixel units.
+    // clang-format off
+    cv::Mat1f _K = (cv::Mat1f (3, 3) <<
+        _f, 0,  _w/2,
+        0,  _f, _h/2,
+        0,  0,  1   );
+    // clang-format on
 
     /**
     * find groups from a vector of keypoints, based on proximity
@@ -72,27 +86,35 @@ class vision_methods {
      * @return          segmented image
      */
     cv::Mat extraction (const cv::Mat& image_in, std::map<unsigned int, cv::Point2f>& markers);
-    
+
     /**
      * set the reference from image
      * @param image_reference the reference image
      * @return returns the reference that is stored
      */
-    std::map<unsigned int, cv::KeyPoint> set_reference (cv::Mat& image_reference);
+    std::map<unsigned int, cv::Point2f> set_reference (const cv::Mat& image_reference);
 
     /**
      * set the reference from key points
-     * @param markers are the reference markers
-     * @return returns the reference markers
+     * @param marker_points are the reference marker_points
+     * @return returns the reference marker_points
      */
-    std::map<unsigned int, cv::KeyPoint> set_reference_keypoints (
-    const std::map<unsigned int, cv::KeyPoint>& markers);
+    std::map<unsigned int, cv::Point2f> set_reference (
+    const std::map<unsigned int, cv::Point2f>& marker_points);
 
     /**
-     * classify the markers and calculate the rotation of the image
-     * @param markers are the key points (the marker locations)
+     * classify the markers and calculate the movement of the image
+     * @param  image the image that needs comparison to reference
+     * @return returns the movement
      */
-    void classification (const std::map<unsigned int, cv::KeyPoint>& markers);
+    movement3d classification (const cv::Mat& image);
+
+    /**
+     * classify the markers and calculate the movement of the image
+     * @param marker_points are the key points (the marker locations)
+     * @return returns the movement
+     */
+    movement3d classification (const std::map<unsigned int, cv::Point2f>& marker_points);
 };
 
 

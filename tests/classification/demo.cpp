@@ -1,3 +1,4 @@
+#include "movement3d.hpp"
 #include "vision_methods.hpp"
 #include <iostream>
 #include <opencv2/calib3d.hpp>
@@ -10,30 +11,89 @@
 #define SAMPLES_DIR ""
 #endif
 
+// source ...
+// <http://stackoverflow.com/questions/35942095/opencv-strange-rotation-and-translation-matrices-from-decomposehomographymat>
+
+void print_movement (std::map<unsigned int, cv::Point2f> ref,
+std::map<unsigned int, cv::Point2f> match);
+
 int main () {
     std::cout << "classification demo" << std::endl;
-    // findHomography(InputArray srcPoints, InputArray dstPoints, int method=0,
-    // double ransacReprojThreshold=3, OutputArray mask=noArray() )
-    // pt(10, 20)
-    std::vector<cv::Point2f> input = { cv::Point2f (91, 81),
-        cv::Point2f (409, 81), cv::Point2f (91, 376), cv::Point2f (409, 376) };
-    std::vector<cv::Point2f> destination = { cv::Point2f (88, 154),
-        cv::Point2f (357, 201), cv::Point2f (102, 432), cv::Point2f (401, 449) };
-    cv::Mat output;
-    output = cv::findHomography (input, destination);
-    std::cout << output << std::endl;
 
+    /**
+     * x x
+     * x x =>
+     *        x x
+     *        x x
+     */
+    // clang-format off
+    print_movement ({
+        { 1, { 0, 0 } }, { 2, { 4, 0 } },
+        { 3, { 0, 4 } }, { 4, { 4, 4 } }
+    }, {
+        { 1, { 0, 4 } }, { 2, { 4, 4 } },
+        { 3, { 0, 8 } }, { 4, { 4, 8 } }
+    });
+    // clang-format on
 
-    cv::Mat image = cv::imread (std::string (SAMPLES_DIR) +
-    std::string ("/perspective_transform_straight.png"));
-    cv::Size size (image.size ());
-    cv::Mat output_image (size, 0);
-    cv::warpPerspective (image, output_image, output, size);
+    /**
+     * x x    x x
+     *        x x
+     * x x =>
+     */
+    // clang-format off
+    print_movement ({
+        { 1, { 0, 0 } }, { 2, { 4, 0 } },
+        { 3, { 0, 4 } }, { 4, { 4, 4 } }
+    }, {
+        { 1, { 0.2, 0 } }, { 2, { 3.8, 0 } },
+        { 3, { 0, 2 } }, { 4, { 4, 2 } }
+    });
+    // clang-format on
 
-    cv::imshow ("outputImage", output_image);
-
-    cv::resize (output, output, { 100, 100 });
-    cv::imshow ("output img", output);
-    cv::waitKey (0);
     return EXIT_SUCCESS;
+}
+
+void print_movement (std::map<unsigned int, cv::Point2f> ref,
+std::map<unsigned int, cv::Point2f> match) {
+    vision_methods test_vm;
+    movement3d movement;
+
+    test_vm.set_reference (ref);
+    movement = test_vm.classification (match);
+
+    std::cout << "-----------------------------------" << std::endl;
+
+    std::cout << "rot x: " << movement.rot_x () << std::endl;
+    std::cout << "rot y: " << movement.rot_y () << std::endl;
+    std::cout << "rot z: " << movement.rot_z () << std::endl;
+    std::cout << std::endl;
+
+    GLfloat gl[movement3d::GL44_SIZE];
+    std::cout << "rot gl x: " << std::endl;
+    movement.rot_x_gl (gl);
+    for (unsigned int i = 0; i < movement3d::GL44_SIZE; i++) {
+        std::cout << gl[i] << ", ";
+    }
+    std::cout << std::endl;
+    std::cout << "rot gl y: " << std::endl;
+    movement.rot_y_gl (gl);
+    for (unsigned int i = 0; i < movement3d::GL44_SIZE; i++) {
+        std::cout << gl[i] << ", ";
+    }
+    std::cout << std::endl;
+    std::cout << "rot gl z: " << std::endl;
+    movement.rot_z_gl (gl);
+    for (unsigned int i = 0; i < movement3d::GL44_SIZE; i++) {
+        std::cout << gl[i] << ", ";
+    }
+    std::cout << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "translation x: " << movement.trans_x () << std::endl;
+    std::cout << "translation y: " << movement.trans_y () << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "scale: " << movement.scale () << std::endl;
+    std::cout << "-----------------------------------" << std::endl;
 }

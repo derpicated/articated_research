@@ -5,6 +5,7 @@ add_definitions(-DSAMPLES_DIR="${SAMPLES_DIR}")
 target_link_libraries(
     classification_demo
         vision_methods
+        movement3d
         ${OpenCV_LIBS}
 )
 
@@ -13,6 +14,7 @@ add_executable(classification_test test.cpp)
 target_link_libraries(
     classification_test
         vision_methods
+        movement3d
         ${OpenCV_LIBS}
         gtest
         gtest_main

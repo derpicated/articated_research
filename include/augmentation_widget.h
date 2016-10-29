@@ -21,26 +21,22 @@ class augmentation_widget : public QOpenGLWidget, protected QOpenGLFunctions {
 
     public slots:
     void setBackground (GLvoid* image, GLsizei width, GLsizei height);
-    void setScale (float factor);
-    void setXPosition (float location);
-    void setYPosition (float location);
-    void setZRotation (int angle);
-    void setXRotation (int angle);
-    void setYRotation (int angle);
+    void setScale (const float factor);
+    void setXPosition (const float location);
+    void setYPosition (const float location);
+    void setZRotation (const GLfloat persp_mat[16]);
+    void setXRotation (const GLfloat persp_mat[16]);
+    void setYRotation (const GLfloat persp_mat[16]);
 
     signals:
-    // signaling rotation from mouse movement
-    void xRotationChanged (int angle);
-    void yRotationChanged (int angle);
-    void zRotationChanged (int angle);
 
     private:
     float _scale_factor;
     float _x_pos;
     float _y_pos;
-    int _x_rot;
-    int _y_rot;
-    int _z_rot;
+    GLfloat _x_persp_mat[16];
+    GLfloat _y_persp_mat[16];
+    GLfloat _z_persp_mat[16];
     GLuint _texture_background;
 };
 

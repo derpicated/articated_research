@@ -3,14 +3,21 @@
 #include "augmentation_widget.h"
 #include <GL/gl.h>
 
+// clang-format off
+#define MATRIX_INITVAL  1, 0, 0, 0,\
+                        0, 1, 0, 0,\
+                        0, 0, 1, 0,\
+                        0, 0, 0, 1
+// clang-format on
+
 augmentation_widget::augmentation_widget (QWidget* parent)
 : QOpenGLWidget (parent)
 , _scale_factor (1.0f)
 , _x_pos (0.0f)
 , _y_pos (0.0f)
-, _x_rot (0)
-, _y_rot (0)
-, _z_rot (0) {
+, _x_persp_mat{ MATRIX_INITVAL }
+, _y_persp_mat{ MATRIX_INITVAL }
+, _z_persp_mat{ MATRIX_INITVAL } {
 }
 
 augmentation_widget::~augmentation_widget () {
@@ -24,11 +31,6 @@ QSize augmentation_widget::sizeHint () const {
     return QSize (500, 500);
 }
 
-static void qNormalizeAngle (int& angle) {
-    while (angle < 0) angle += 360;
-    while (angle > 360) angle -= 360;
-}
-
 void augmentation_widget::setBackground (GLvoid* image, GLsizei width, GLsizei height) {
     // create background texture
     glBindTexture (GL_TEXTURE_2D, _texture_background);
@@ -38,34 +40,34 @@ void augmentation_widget::setBackground (GLvoid* image, GLsizei width, GLsizei h
     glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, image);
 }
 
-void augmentation_widget::setScale (float scale) {
+void augmentation_widget::setScale (const float scale) {
     _scale_factor = scale;
-    // emit xPositionChanged (location);
 }
 
-void augmentation_widget::setXPosition (float location) {
+void augmentation_widget::setXPosition (const float location) {
     _x_pos = location;
-    // emit xPositionChanged (location);
 }
 
-void augmentation_widget::setYPosition (float location) {
+void augmentation_widget::setYPosition (const float location) {
     _y_pos = location;
-    // emit yPositionChanged (location);
 }
 
-void augmentation_widget::setXRotation (int angle) {
-    qNormalizeAngle (angle);
-    _x_rot = angle;
+void augmentation_widget::setXRotation (const GLfloat persp_mat[16]) {
+    for (int i = 0; i < 16; i++) {
+        _x_persp_mat[i] = persp_mat[i];
+    }
 }
 
-void augmentation_widget::setYRotation (int angle) {
-    qNormalizeAngle (angle);
-    _y_rot = angle;
+void augmentation_widget::setYRotation (const GLfloat persp_mat[16]) {
+    for (int i = 0; i < 16; i++) {
+        _x_persp_mat[i] = persp_mat[i];
+    }
 }
 
-void augmentation_widget::setZRotation (int angle) {
-    qNormalizeAngle (angle);
-    _z_rot = angle;
+void augmentation_widget::setZRotation (const GLfloat persp_mat[16]) {
+    for (int i = 0; i < 16; i++) {
+        _x_persp_mat[i] = persp_mat[i];
+    }
 }
 
 void augmentation_widget::initializeGL () {
@@ -140,9 +142,12 @@ void augmentation_widget::paintGL () {
 
     glTranslatef (_x_pos, _y_pos, 0);
     glScalef (_scale_factor, _scale_factor, _scale_factor);
-    glRotatef (_x_rot, 1, 0, 0);
-    glRotatef (_y_rot, 0, 1, 0);
-    glRotatef (_z_rot, 0, 0, 1);
+    glMultMatrixf (_x_persp_mat);
+    glMultMatrixf (_y_persp_mat);
+    glMultMatrixf (_z_persp_mat);
+    /*glRotatef (_x_rot, 1, 0, 0);
+        glRotatef (_y_rot, 0, 1, 0);
+        glRotatef (_z_rot, 0, 0, 1);*/
 
     glBegin (GL_QUADS);
     glColor3f (0, 1, 1);

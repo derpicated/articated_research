@@ -69,12 +69,28 @@ void Window::timeout () {
     cv::Mat frame, preprocessed, segmented;
     std::map<unsigned int, cv::Point2f> marker_points;
     movement3d movement;
+    GLfloat persp_mat[16];
     try {
         frame        = _acquisition.capture ();
         preprocessed = _vision_methods.preprocessing (frame);
         segmented    = _vision_methods.segmentation (preprocessed);
         _vision_methods.extraction (segmented, marker_points);
         movement = _vision_methods.classification (marker_points);
+
+        movement.rot_x_gl (persp_mat);
+        _augmentation.setXRotation (persp_mat);
+        movement.rot_y_gl (persp_mat);
+        _augmentation.setYRotation (persp_mat);
+        movement.rot_z_gl (persp_mat);
+        _augmentation.setZRotation (persp_mat);
+
+        float xpos =
+        movement.translation_delta_to_absolute (movement.trans_x (), frame.cols);
+        float ypos =
+        movement.translation_delta_to_absolute (movement.trans_y (), frame.rows);
+        _augmentation.setXPosition (xpos);
+        _augmentation.setYPosition (ypos);
+        _augmentation.setScale (movement.scale ());
     } catch (const std::length_error& e) {
         _statusbar.showMessage (std::string (e.what ()).c_str (), 100);
     } catch (const std::runtime_error& e) {

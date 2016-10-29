@@ -244,7 +244,7 @@ const std::map<unsigned int, cv::Point2f>& marker_points) {
         movement.rot_y (default_rot_mat);
     }
     // z
-    if (rotations.size () >= 1) {
+    if (rotations.size () >= 3) {
         movement.rot_z (rotations[2]);
     } else {
         movement.rot_z (default_rot_mat);

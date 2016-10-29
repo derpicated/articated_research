@@ -222,6 +222,17 @@ const std::map<unsigned int, cv::Point2f>& marker_points) {
         normal.convertTo (normal, CV_32F);
     }
 
+    // make H available
+    //    a b c
+    // H: d e f
+    //    0 0 1
+    float Ha = H.at<float> (cv::Point (0, 0));
+    float Hb = H.at<float> (cv::Point (1, 0));
+    float Hc = H.at<float> (cv::Point (2, 0));
+    float Hd = H.at<float> (cv::Point (0, 1));
+    float He = H.at<float> (cv::Point (1, 1));
+    float Hf = H.at<float> (cv::Point (2, 0));
+
     // set x, y, z if available
     // clang-format off
     float default_rot_val[9] = {
@@ -255,11 +266,23 @@ const std::map<unsigned int, cv::Point2f>& marker_points) {
     // H: d e f  f: Ty
     //    0 0 1
     // x:
-    movement.trans_x (H.at<float> (cv::Point (2, 0)));
+    movement.trans_x (Hc);
     // y:
-    movement.trans_y (H.at<float> (cv::Point (2, 1)));
+    movement.trans_y (Hf);
 
     // set scale
-    movement.scale (1); // for now
+    //    a b c  a: Sx (also contains 2D rot, so not optimal)
+    // H: d e f  e: Sy (also contains 2D rot, so not optimal)
+    //    0 0 1
+    // Sx: sqrt(a^2+b^2)
+    // Sy: (a*e - b*d) / ( sqrt(a^2+b^2) )
+    //
+    float Sx = sqrt (pow (Ha, 2) + pow (Hb, 2));
+    float Sy = ((Ha * He - Hb * Hd) / (Sx));
+    (void)Sy;
+
+    // is fluctuating a lot, so better to keep this one steady
+    // movement.scale (Sx);
+    movement.scale (1);
     return movement;
 }

@@ -47,11 +47,14 @@ void Window::posYSlider_valueChanged (int new_value) {
 }
 
 void Window::rotXSlider_valueChanged (int new_value) {
-    ui->testWidget->setXRotation (new_value);
+    GLfloat persp_mat[16] = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+    ui->testWidget->setXRotation (persp_mat);
 }
 void Window::rotYSlider_valueChanged (int new_value) {
-    ui->testWidget->setYRotation (new_value);
+    GLfloat persp_mat[16] = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+    ui->testWidget->setYRotation (persp_mat);
 }
 void Window::rotZSlider_valueChanged (int new_value) {
-    ui->testWidget->setZRotation (new_value);
+    GLfloat persp_mat[16] = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+    ui->testWidget->setZRotation (persp_mat);
 }

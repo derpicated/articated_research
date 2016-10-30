@@ -66,7 +66,9 @@ const float t_max) const {
 
 // rotation
 void movement3d::rot_x (const cv::Mat& x) {
-    _rotation_x = x;
+    cv::Mat mat32f;
+    x.convertTo (mat32f, CV_32F);
+    _rotation_x = mat32f;
 }
 cv::Mat movement3d::rot_x () const {
     return _rotation_x;
@@ -76,7 +78,9 @@ void movement3d::rot_x_gl (GLfloat gl[GL44_SIZE]) const {
 }
 
 void movement3d::rot_y (const cv::Mat& y) {
-    _rotation_y = y;
+    cv::Mat mat32f;
+    y.convertTo (mat32f, CV_32F);
+    _rotation_y = mat32f;
 }
 cv::Mat movement3d::rot_y () const {
     return _rotation_y;
@@ -86,7 +90,9 @@ void movement3d::rot_y_gl (GLfloat gl[GL44_SIZE]) const {
 }
 
 void movement3d::rot_z (const cv::Mat& z) {
-    _rotation_z = z;
+    cv::Mat mat32f;
+    z.convertTo (mat32f, CV_32F);
+    _rotation_z = mat32f;
 }
 cv::Mat movement3d::rot_z () const {
     return _rotation_z;

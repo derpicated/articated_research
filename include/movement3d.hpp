@@ -23,7 +23,9 @@ class movement3d {
     movement3d ();
     ~movement3d ();
 
+    movement3d& operator+= (const movement3d& movement);
     movement3d operator+ (const movement3d& movement);
+
     /**
      * convert 3x3 opencv matrix to a 4x4 opengl matrix
      * @param  matrix 3x3 opencv matrix

@@ -160,7 +160,24 @@ movement3d& movement3d::operator+= (const movement3d& movement) {
 }
 
 movement3d movement3d::operator+ (const movement3d& movement) {
-    movement3d r = *this;
     *this += movement;
+    return *this;
+}
+
+movement3d& movement3d::operator/= (const int factor) {
+    this->rot_x (this->rot_x () / factor);
+    this->rot_y (this->rot_y () / factor);
+    this->rot_z (this->rot_z () / factor);
+
+    this->trans_x (this->trans_x () / factor);
+    this->trans_y (this->trans_y () / factor);
+
+    this->scale (this->scale () / factor);
+
+    return *this;
+}
+
+movement3d movement3d::operator/ (const int factor) {
+    *this /= factor;
     return *this;
 }

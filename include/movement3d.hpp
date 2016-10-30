@@ -7,6 +7,14 @@
 
 class movement3d {
     private:
+    // clang-format off
+    float rotation_empty_val[9] = {
+        0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0
+    };
+    // clang-format on
+    cv::Mat rotation_empty = cv::Mat (3, 3, CV_32F, rotation_empty_val);
     // rotation
     cv::Mat _rotation_x;
     cv::Mat _rotation_y;

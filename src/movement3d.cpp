@@ -3,7 +3,13 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
-movement3d::movement3d () {
+movement3d::movement3d ()
+: _translation_x (0.0)
+, _translation_y (0.0)
+, _scale (0.0) {
+    rot_x (rotation_empty);
+    rot_y (rotation_empty);
+    rot_z (rotation_empty);
 }
 movement3d::~movement3d () {
 }

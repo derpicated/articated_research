@@ -23,8 +23,6 @@ class movement3d {
     movement3d ();
     ~movement3d ();
 
-    friend std::ostream& operator<< (std::ostream& os, const movement3d& movement);
-
     /**
      * convert 3x3 opencv matrix to a 4x4 opengl matrix
      * @param  matrix 3x3 opencv matrix
@@ -112,5 +110,8 @@ class movement3d {
     void scale (const float scale);
     float scale () const;
 };
+
+// operator functions
+std::ostream& operator<< (std::ostream& os, const movement3d& movement);
 
 #endif // movement3d_HPP

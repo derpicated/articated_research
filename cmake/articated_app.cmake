@@ -16,6 +16,7 @@ target_link_libraries(
         opencv_core
         opencv_highgui
         movement3d
+        movement3d_filter
         vision_methods
         acquisition
         vision_methods

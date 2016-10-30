@@ -13,6 +13,7 @@
 #include "acquisition.hpp"
 #include "augmentation_widget.h"
 #include "movement3d.hpp"
+#include "movement3d_filter.hpp"
 #include "vision_methods.hpp"
 
 namespace Ui {
@@ -43,6 +44,7 @@ class Window : public QWidget {
     private:
     unsigned int _framerate = 30;
     vision_methods _vision_methods;
+    movement3d_average _movements;
     acquisition _acquisition;
 
     QTimer _frame_timer;

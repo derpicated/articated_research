@@ -27,6 +27,7 @@ Window::Window (QWidget* parent)
 , _btn_reference ("Set Reference", this)
 , _btn_input ("Select Input", this)
 , _statusbar (this)
+, _movements (10)
 , _augmentation (this) {
     _layout_app.addWidget (&_holder_layout_img);
     _layout_app.addWidget (&_holder_layout_btn);
@@ -76,7 +77,7 @@ void Window::timeout () {
         segmented    = _vision_methods.segmentation (preprocessed);
         _vision_methods.extraction (segmented, marker_points);
         movement = _vision_methods.classification (marker_points);
-
+        movement = _movements.average (movement);
         movement.rot_x_gl (persp_mat);
         _augmentation.setXRotation (persp_mat);
         movement.rot_y_gl (persp_mat);

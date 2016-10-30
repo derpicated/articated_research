@@ -7,7 +7,7 @@
 #include <opencv2/opencv.hpp>
 
 class movement3d_average {
-    std::vector<movement3d> movements;
+    std::deque<movement3d> _movements;
     unsigned int _samples = 1;
 
     private:

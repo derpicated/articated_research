@@ -9,10 +9,20 @@ movement3d_average::~movement3d_average () {
 }
 
 movement3d movement3d_average::average () {
-    movement3d empty;
-    return empty;
+    movement3d average;
+    for (movement3d movement : _movements) {
+        average += movement;
+    }
+    if (!_movements.empty ()) {
+        average /= _movements.size ();
+    }
+    return average;
 }
 
 movement3d movement3d_average::average (movement3d movement) {
-    return movement;
+    _movements.push_back (movement);
+    if (_movements.size () > _samples) {
+        _movements.pop_front ();
+    }
+    return average ();
 }

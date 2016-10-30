@@ -145,3 +145,16 @@ std::ostream& operator<< (std::ostream& os, const movement3d& movement) {
     os << "scale: " << movement.scale () << std::endl;
     return os;
 }
+
+movement3d movement3d::operator+ (const movement3d& movement) {
+    movement3d r;
+    r.rot_x (this->rot_x () + movement.rot_x ());
+    r.rot_y (this->rot_y () + movement.rot_y ());
+    r.rot_z (this->rot_z () + movement.rot_z ());
+
+    r.trans_x (this->trans_x () + movement.trans_x ());
+    r.trans_y (this->trans_y () + movement.trans_y ());
+
+    r.scale (this->scale () + movement.scale ());
+    return r;
+}

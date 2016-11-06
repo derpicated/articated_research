@@ -16,8 +16,6 @@ target_link_libraries(
         vision_methods
         movement3d
         ${OpenCV_LIBS}
-        gtest
-        gtest_main
 )
 add_test(NAME classification_test
          COMMAND classification_test

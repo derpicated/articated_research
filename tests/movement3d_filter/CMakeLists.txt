@@ -5,8 +5,6 @@ target_link_libraries(
         movement3d_filter
         movement3d
         ${OpenCV_LIBS}
-        gtest
-        gtest_main
 )
 add_test(NAME movement3d_filter_test
          COMMAND movement3d_filter_test

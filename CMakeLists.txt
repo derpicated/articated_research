@@ -19,6 +19,7 @@ include(movement3d_filter)
 include(vision_methods)
 include(augmentation_widget)
 include(articated_app)
+include(articated_android_app)
 
 # tests
 option(TESTS "Enable ARticated tests" OFF)

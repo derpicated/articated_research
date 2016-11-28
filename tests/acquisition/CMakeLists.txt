@@ -14,6 +14,8 @@ target_link_libraries(
     acquisition_test
         acquisition
         ${OpenCV_LIBS}
+        gtest
+        gtest_main
 )
 add_test(NAME acquisition_test
          COMMAND acquisition_test

@@ -25,6 +25,8 @@ option(TESTS "Enable ARticated tests" OFF)
 
 if(TESTS)
     add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} --force-new-ctest-process --output-on-failure)
+    add_subdirectory(googletest)
+    include_directories(SYSTEM ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
     enable_testing()
     add_subdirectory(tests)
 endif(TESTS)

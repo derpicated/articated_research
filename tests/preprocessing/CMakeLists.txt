@@ -15,6 +15,8 @@ target_link_libraries(
         acquisition
         vision_methods
         ${OpenCV_LIBS}
+        gtest
+        gtest_main
 )
 add_test(NAME preprocessing_test
          COMMAND preprocessing_test

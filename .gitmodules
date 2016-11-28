@@ -6,4 +6,4 @@
 	url = https://github.com/opencv/opencv.git
 [submodule "qt-android-cmake"]
 	path = qt-android-cmake
-	url = git@github.com:LaurentGomila/qt-android-cmake.git
+	url = https://github.com/LaurentGomila/qt-android-cmake.git

@@ -129,25 +129,14 @@ void augmentation_widget::paintGL () {
 
     glPushMatrix ();
 
-    /*GLfloat persp_mat[16] = { 1, 0, -3.845925372767128e-16, 0, 0,
-        0.5000000000000003, -5.768888059150692e-16, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
-    glMultMatrixf (persp_mat);*/
-    //[1, 0, -3.845925372767128e-16;
-    // 0, 0.3333333333333335, 0.6666666666666663;
-    // 0, 0, 1]
-
-    //[1, 0, -3.845925372767128e-16;
-    // 0, 0.5000000000000003, -5.768888059150692e-16;
-    // 0, 0, 1]
-
     glTranslatef (_x_pos, _y_pos, 0);
     glScalef (_scale_factor, _scale_factor, _scale_factor);
     glMultMatrixf (_x_persp_mat);
     glMultMatrixf (_y_persp_mat);
     glMultMatrixf (_z_persp_mat);
-    /*glRotatef (_x_rot, 1, 0, 0);
-        glRotatef (_y_rot, 0, 1, 0);
-        glRotatef (_z_rot, 0, 0, 1);*/
+    // glRotatef (_x_rot, 1, 0, 0);
+    // glRotatef (_y_rot, 0, 1, 0);
+    // glRotatef (_z_rot, 0, 0, 1);*/
 
     glBegin (GL_QUADS);
     glColor3f (0, 1, 1);

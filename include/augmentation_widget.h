@@ -5,6 +5,9 @@
 
 #include <QOpenGLFunctions>
 #include <QOpenGLWidget>
+#include <QVector2D>
+#include <QVector3D>
+
 
 class augmentation_widget : public QOpenGLWidget, protected QOpenGLFunctions {
     Q_OBJECT
@@ -20,6 +23,7 @@ class augmentation_widget : public QOpenGLWidget, protected QOpenGLFunctions {
     QSize sizeHint () const;
 
     public slots:
+    void loadObject ();
     void setBackground (GLvoid* image, GLsizei width, GLsizei height);
     void setScale (const float factor);
     void setXPosition (const float location);
@@ -31,6 +35,12 @@ class augmentation_widget : public QOpenGLWidget, protected QOpenGLFunctions {
     signals:
 
     private:
+    void drawObject ();
+    bool parseObject (const char* path,
+    std::vector<QVector3D>& out_vertices,
+    std::vector<QVector2D>& out_uvs,
+    std::vector<QVector3D>& out_normals);
+
     float _scale_factor;
     float _x_pos;
     float _y_pos;

@@ -60,13 +60,13 @@ void augmentation_widget::setXRotation (const GLfloat persp_mat[16]) {
 
 void augmentation_widget::setYRotation (const GLfloat persp_mat[16]) {
     for (int i = 0; i < 16; i++) {
-        _x_persp_mat[i] = persp_mat[i];
+        _y_persp_mat[i] = persp_mat[i];
     }
 }
 
 void augmentation_widget::setZRotation (const GLfloat persp_mat[16]) {
     for (int i = 0; i < 16; i++) {
-        _x_persp_mat[i] = persp_mat[i];
+        _z_persp_mat[i] = persp_mat[i];
     }
 }
 

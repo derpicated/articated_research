@@ -29,6 +29,7 @@ class Window : public QWidget {
     void keyPressEvent (QKeyEvent* event);
 
     private:
+    void angle_to_matrix (float mat[16], float angle, float x, float y, float z);
     Ui::Window* ui;
 };
 

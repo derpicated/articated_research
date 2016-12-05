@@ -6,10 +6,16 @@
 
 #include "augmentation_widget.h"
 
+#ifndef SAMPLES_DIR
+#define SAMPLES_DIR ""
+#endif
+
 Window::Window (QWidget* parent)
 : QWidget (parent)
 , ui (new Ui::Window) {
     ui->setupUi (this);
+
+    connect (ui->loadButton, SIGNAL (clicked ()), this, SLOT (loadButton_clicked ()));
 
     connect (ui->scaleSlider, SIGNAL (valueChanged (int)), this,
     SLOT (scaleSlider_valueChanged (int)));
@@ -35,6 +41,11 @@ void Window::keyPressEvent (QKeyEvent* e) {
         close ();
     else
         QWidget::keyPressEvent (e);
+}
+
+void Window::loadButton_clicked () {
+    ui->testWidget->loadObject (
+    std::string (SAMPLES_DIR) + std::string ("/teapot.obj"));
 }
 
 void Window::scaleSlider_valueChanged (int new_value) {

@@ -18,6 +18,7 @@ class Window : public QWidget {
     ~Window ();
 
     public slots:
+    void loadButton_clicked ();
     void scaleSlider_valueChanged (int new_value);
     void posXSlider_valueChanged (int new_value);
     void posYSlider_valueChanged (int new_value);

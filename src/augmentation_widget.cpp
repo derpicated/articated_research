@@ -34,22 +34,25 @@ QSize augmentation_widget::sizeHint () const {
     return QSize (500, 500);
 }
 
-void augmentation_widget::loadObject () {
+bool augmentation_widget::loadObject (std::string path) {
     std::vector<QVector3D> vertices;
     std::vector<QVector2D> uvs;
     std::vector<QVector3D> normals; // Won't be used at the moment.
-    bool res = parseObject ("~/Download/cube.obj", vertices, uvs, normals);
+    bool res = parseObject (path.c_str (), vertices, uvs, normals);
 
-    GLuint vertexbuffer;
-    glGenBuffers (1, &vertexbuffer);
-    glBindBuffer (GL_ARRAY_BUFFER, vertexbuffer);
-    glBufferData (GL_ARRAY_BUFFER, vertices.size () * sizeof (QVector3D),
-    &vertices[0], GL_STATIC_DRAW);
+    if (res == true) {
+        GLuint vertexbuffer;
+        glGenBuffers (1, &vertexbuffer);
+        glBindBuffer (GL_ARRAY_BUFFER, vertexbuffer);
+        glBufferData (GL_ARRAY_BUFFER, vertices.size () * sizeof (QVector3D),
+        &vertices[0], GL_STATIC_DRAW);
 
-    GLuint uvbuffer;
-    glGenBuffers (1, &uvbuffer);
-    glBindBuffer (GL_ARRAY_BUFFER, uvbuffer);
-    glBufferData (GL_ARRAY_BUFFER, uvs.size () * sizeof (QVector2D), &uvs[0], GL_STATIC_DRAW);
+        GLuint uvbuffer;
+        glGenBuffers (1, &uvbuffer);
+        glBindBuffer (GL_ARRAY_BUFFER, uvbuffer);
+        glBufferData (GL_ARRAY_BUFFER, uvs.size () * sizeof (QVector2D), &uvs[0], GL_STATIC_DRAW);
+    }
+    return res;
 }
 
 void augmentation_widget::setBackground (GLvoid* image, GLsizei width, GLsizei height) {

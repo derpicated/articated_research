@@ -16,6 +16,8 @@
 
 Window::Window (QWidget* parent)
 : QWidget (parent)
+, _vision_methods ()
+, _movements (10)
 , _acquisition ()
 , _frame_timer ()
 , _holder_layout_img (this)
@@ -27,7 +29,6 @@ Window::Window (QWidget* parent)
 , _btn_reference ("Set Reference", this)
 , _btn_input ("Select Input", this)
 , _statusbar (this)
-, _movements (10)
 , _augmentation (this) {
     _layout_app.addWidget (&_holder_layout_img);
     _layout_app.addWidget (&_holder_layout_btn);
@@ -46,6 +47,8 @@ Window::Window (QWidget* parent)
 
     _frame_timer.setInterval (1000 / _framerate);
     _frame_timer.start ();
+    _augmentation.loadObject (
+    std::string (SAMPLES_DIR) + std::string ("/articated.obj"));
 }
 
 Window::~Window () {

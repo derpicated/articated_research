@@ -45,7 +45,7 @@ void Window::keyPressEvent (QKeyEvent* e) {
 
 void Window::loadButton_clicked () {
     ui->testWidget->loadObject (
-    std::string (SAMPLES_DIR) + std::string ("/teapot.obj"));
+    std::string (SAMPLES_DIR) + std::string ("/articated.obj"));
 }
 
 void Window::scaleSlider_valueChanged (int new_value) {

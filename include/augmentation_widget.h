@@ -8,6 +8,7 @@
 #include <QVector2D>
 #include <QVector3D>
 
+#include "model_loader.hpp"
 
 class augmentation_widget : public QOpenGLWidget, protected QOpenGLFunctions {
     Q_OBJECT
@@ -41,6 +42,7 @@ class augmentation_widget : public QOpenGLWidget, protected QOpenGLFunctions {
     std::vector<QVector2D>& out_uvs,
     std::vector<QVector3D>& out_normals);
 
+    model_obj _object;
     float _scale_factor;
     float _x_pos;
     float _y_pos;

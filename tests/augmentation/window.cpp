@@ -6,8 +6,8 @@
 
 #include "augmentation_widget.h"
 
-#ifndef SAMPLES_DIR
-#define SAMPLES_DIR ""
+#ifndef RES_DIR
+#define RES_DIR ""
 #endif
 
 Window::Window (QWidget* parent)
@@ -45,7 +45,8 @@ void Window::keyPressEvent (QKeyEvent* e) {
 
 void Window::loadButton_clicked () {
     ui->testWidget->loadObject (
-    std::string (SAMPLES_DIR) + std::string ("/articated.obj"));
+    std::string (RES_DIR) + std::string ("/shuttle.obj"));
+    ui->testWidget->update ();
 }
 
 void Window::scaleSlider_valueChanged (int new_value) {

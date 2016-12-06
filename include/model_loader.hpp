@@ -4,13 +4,15 @@
 class model_obj {
     public:
     model_obj ();
-    void calculateNormal (float* norm, float* coord1, float* coord2, float* coord3);
-    bool Load (const char* filename); // Loads the model
-    void Draw ();                     // Draws the model on the screen
-    void Release ();                  // Release the model
+    bool load (const char* filename); // Loads the model
+    void draw ();                     // Draws the model on the screen
+    void release ();                  // Release the model
 
     private:
+    void calculate_normal (float* norm, float* coord1, float* coord2, float* coord3);
     void calculate_scale ();
+
+    bool _is_loaded;
     float _scale_factor;
     float* normals;            // Stores the normals
     float* Faces_Triangles;    // Stores the triangles

@@ -14,9 +14,10 @@
 model_obj::model_obj () {
     this->TotalConnectedTriangles = 0;
     this->TotalConnectedPoints    = 0;
+    _is_loaded                    = false;
 }
 
-void model_obj::calculateNormal (float* norm, float* coord1, float* coord2, float* coord3) {
+void model_obj::calculate_normal (float* norm, float* coord1, float* coord2, float* coord3) {
     /* calculate Vector1 and Vector2 */
     float va[3], vb[3], vr[3], val;
     va[0] = coord1[0] - coord2[0];
@@ -52,9 +53,15 @@ void model_obj::calculate_scale () {
     (1 / max_val); // ensure that every vertex fits in range -1 to 1
 }
 
-bool model_obj::Load (const char* filename) {
+bool model_obj::load (const char* filename) {
+
     bool status = true;
     std::string line;
+
+    if (_is_loaded) {
+        release ();
+    }
+
     std::ifstream objFile (filename);
     if (objFile.is_open ()) // If obj file is open, continue
     {
@@ -96,9 +103,9 @@ bool model_obj::Load (const char* filename) {
                                // to use sscanf
 
 
-                unsigned int vertexIndex[3]  = { 0 };
-                unsigned int textureIndex[3] = { 0 };
-                unsigned int normalIndex[3]  = { 0 };
+                unsigned int vertexIndex[4]  = { 0 };
+                unsigned int textureIndex[4] = { 0 };
+                unsigned int normalIndex[4]  = { 0 };
                 int matches;
                 matches = sscanf (line.c_str (),
                 "%i%i%i", // Read integers from the line:  f x y z
@@ -115,7 +122,12 @@ bool model_obj::Load (const char* filename) {
                         &vertexIndex[0], &normalIndex[0], &vertexIndex[1],
                         &normalIndex[1], &vertexIndex[2], &normalIndex[2]);
                         if (matches != POINTS_PER_VERTEX * 2) {
-                            status = false;
+                            matches = sscanf (line.c_str (), "%d %d %d %d\n",
+                            &vertexIndex[0], &vertexIndex[1], &vertexIndex[2],
+                            &vertexIndex[3]);
+                            if (matches != POINTS_PER_VERTEX * 4) {
+                                status = false;
+                            }
                         }
                     }
                 }
@@ -158,7 +170,7 @@ bool model_obj::Load (const char* filename) {
                     Faces_Triangles[triangle_index + 7],
                     Faces_Triangles[triangle_index + 8] };
                 float norm[3];
-                this->calculateNormal (norm, coord1, coord2, coord3);
+                calculate_normal (norm, coord1, coord2, coord3);
 
                 tCounter = 0;
                 for (int i = 0; i < POINTS_PER_VERTEX; i++) {
@@ -183,13 +195,14 @@ bool model_obj::Load (const char* filename) {
     return status;
 }
 
-void model_obj::Release () {
-    free (this->Faces_Triangles);
-    free (this->normals);
-    free (this->vertexBuffer);
+void model_obj::release () {
+    _is_loaded = false;
+    free (Faces_Triangles);
+    free (normals);
+    free (vertexBuffer);
 }
 
-void model_obj::Draw () {
+void model_obj::draw () {
     glEnableClientState (GL_VERTEX_ARRAY); // Enable vertex arrays
     glEnableClientState (GL_NORMAL_ARRAY); // Enable normal arrays
     glVertexPointer (

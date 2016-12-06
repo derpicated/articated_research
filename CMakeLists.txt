@@ -8,6 +8,7 @@ set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}" CACHE PATH "Output directory fo
 set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 set(SAMPLES_DIR ${CMAKE_SOURCE_DIR}/tests/samples)
+set(RES_DIR ${CMAKE_SOURCE_DIR}/res)
 
 include_directories(${INCLUDE_DIR})
 

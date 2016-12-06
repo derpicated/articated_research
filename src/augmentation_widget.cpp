@@ -36,7 +36,7 @@ QSize augmentation_widget::sizeHint () const {
 
 bool augmentation_widget::loadObject (std::string path) {
     bool status;
-    status = _object.Load (path.c_str ());
+    status = _object.load (path.c_str ());
     return status;
 }
 
@@ -146,8 +146,7 @@ void augmentation_widget::paintGL () {
     glMultMatrixf (_z_persp_mat);
 
     glColor3f (1, 0, 0); // draw in red
-    _object.Draw ();
-    // drawObject ();
+    _object.draw ();
 
     glPopMatrix ();
 }

@@ -48,7 +48,7 @@ Window::Window (QWidget* parent)
     _frame_timer.setInterval (1000 / _framerate);
     _frame_timer.start ();
     _augmentation.loadObject (
-    std::string (SAMPLES_DIR) + std::string ("/articated.obj"));
+    std::string (SAMPLES_DIR) + std::string ("/teapot.obj"));
 }
 
 Window::~Window () {

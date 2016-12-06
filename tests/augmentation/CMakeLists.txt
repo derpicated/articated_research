@@ -1,6 +1,8 @@
 project(augmentation_test)
 find_package(Qt5 REQUIRED Core Gui Widgets OpenGL)
 
+add_definitions(-DRES_DIR="${RES_DIR}")
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set( augmentation_test_SOURCES   main.cpp window.cpp )
 set( augmentation_test_HEADERS   window.h )

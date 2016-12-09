@@ -138,22 +138,22 @@ bool model_obj::parse_face (std::string line) {
     line[0] = ' '; // Set first character to 0. This will allow us
                    // to use sscanf
 
-    matches = sscanf (line.c_str (), "%d %d %d", &v[0], &v[1], &v[2]);
 
-    if (matches != 3) { // other format
-        matches = sscanf (line.c_str (), "%d/%d/%d %d/%d/%d %d/%d/%d\n", &v[0],
-        &t[0], &n[0], &v[1], &t[1], &n[1], &v[2], &t[2], &n[2]);
+    matches = sscanf (line.c_str (), "%d %d %d %d\n", &v[0], &v[1], &v[2], &v[3]);
+    if (matches == 4) {
+        is_quad = true;
+    } else {
+        matches = sscanf (line.c_str (), "%d %d %d", &v[0], &v[1], &v[2]);
 
-        if (matches != 9) { // other format
-            matches = sscanf (line.c_str (), "%d//%d %d//%d %d//%d\n", &v[0],
-            &n[0], &v[1], &n[1], &v[2], &n[2]);
+        if (matches != 3) { // other format
+            matches = sscanf (line.c_str (), "%d/%d/%d %d/%d/%d %d/%d/%d\n",
+            &v[0], &t[0], &n[0], &v[1], &t[1], &n[1], &v[2], &t[2], &n[2]);
 
-            if (matches != 6) {
-                matches =
-                sscanf (line.c_str (), "%d %d %d %d\n", &v[0], &v[1], &v[2], &v[3]);
-                is_quad = true;
+            if (matches != 9) { // other format
+                matches = sscanf (line.c_str (), "%d//%d %d//%d %d//%d\n",
+                &v[0], &n[0], &v[1], &n[1], &v[2], &n[2]);
 
-                if (matches != 4) {
+                if (matches != 6) {
                     status = false;
                 }
             }

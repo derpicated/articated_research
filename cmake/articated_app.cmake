@@ -8,6 +8,7 @@ qt5_wrap_cpp(articated_MOC ${articated_HEADERS})
 
 
 add_executable( articated_app ${articated_SOURCES} ${articated_MOC})
+add_definitions(-DRES_DIR="${RES_DIR}")
 add_definitions(-DSAMPLES_DIR="${SAMPLES_DIR}")
 target_link_libraries(
     articated_app

@@ -4,6 +4,10 @@
 #define SAMPLES_DIR ""
 #endif
 
+#ifndef RES_DIR
+#define RES_DIR ""
+#endif
+
 #include <QComboBox>
 #include <QDialog>
 #include <QFileDialog>
@@ -48,7 +52,7 @@ Window::Window (QWidget* parent)
     _frame_timer.setInterval (1000 / _framerate);
     _frame_timer.start ();
     _augmentation.loadObject (
-    std::string (SAMPLES_DIR) + std::string ("/teapot.obj"));
+    std::string (RES_DIR) + std::string ("/teapot.obj"));
 }
 
 Window::~Window () {

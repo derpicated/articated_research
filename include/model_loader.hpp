@@ -1,6 +1,9 @@
 #ifndef MODEL_OBJ_HPP
 #define MODEL_OBJ_HPP
 
+#include <string>
+#include <vector>
+
 class model_obj {
     public:
     model_obj ();
@@ -11,15 +14,16 @@ class model_obj {
     private:
     void calculate_normal (float* norm, float* coord1, float* coord2, float* coord3);
     void calculate_scale ();
+    bool parse_line (std::string line);
+    bool parse_vertex (std::string line);
+    bool parse_face (std::string line);
 
     bool _is_loaded;
     float _scale_factor;
-    float* normals;            // Stores the normals
-    float* Faces_Triangles;    // Stores the triangles
-    float* vertexBuffer;       // Stores the points which make the object
-    long TotalConnectedPoints; // Stores the total number of connected verteces
-    long TotalConnectedTriangles; // Stores the total number of connected
-                                  // triangles
+    std::vector<float> _vertices;
+    std::vector<float> _faces;
+    std::vector<float> _normals;
+    std::vector<float> _colors;
 };
 
 #endif // MODEL_OBJ_HPP

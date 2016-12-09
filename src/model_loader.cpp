@@ -11,10 +11,16 @@
 #define POINTS_PER_VERTEX 3
 #define TOTAL_FLOATS_IN_TRIANGLE 9
 
-model_obj::model_obj () {
-    this->TotalConnectedTriangles = 0;
-    this->TotalConnectedPoints    = 0;
-    _is_loaded                    = false;
+model_obj::model_obj ()
+: _is_loaded (false)
+, _scale_factor (1) {
+}
+
+void model_obj::release () {
+    _is_loaded = false;
+    _faces.clear ();
+    _normals.clear ();
+    _colors.clear ();
 }
 
 void model_obj::calculate_normal (float* norm, float* coord1, float* coord2, float* coord3) {
@@ -42,19 +48,37 @@ void model_obj::calculate_normal (float* norm, float* coord1, float* coord2, flo
 }
 
 void model_obj::calculate_scale () {
+    // ensure that every vertex fits into range -1 to 1
     float max_val = 0;
-    for (int i = TotalConnectedPoints - 1; i >= 0; --i) {
-        float abs_val = fabs (vertexBuffer[i]);
+    for (float val : _vertices) {
+        float abs_val = fabs (val);
         if (max_val < abs_val) {
             max_val = abs_val;
         }
     }
-    _scale_factor =
-    (1 / max_val); // ensure that every vertex fits in range -1 to 1
+    _scale_factor = (1 / max_val);
+}
+
+void model_obj::draw () {
+    GLsizei face_count = _faces.size () / 3; // 3 points per face
+
+    glEnableClientState (GL_VERTEX_ARRAY); // Enable vertex arrays
+    glEnableClientState (GL_NORMAL_ARRAY); // Enable normal arrays
+    // glEnableClientState (GL_COLOR_ARRAY);  // Enable color arrays
+
+    glScalef (_scale_factor, _scale_factor, _scale_factor);
+
+    glVertexPointer (3, GL_FLOAT, 0, _faces.data ());
+    glNormalPointer (GL_FLOAT, 0, _normals.data ());
+    glColorPointer (4, GL_FLOAT, 0, _colors.data ());
+    glDrawArrays (GL_TRIANGLES, 0, face_count);
+
+    glDisableClientState (GL_VERTEX_ARRAY); // Disable vertex arrays
+    glDisableClientState (GL_NORMAL_ARRAY); // Disable normal arrays
+    // glDisableClientState (GL_COLOR_ARRAY);  // Disable color arrays
 }
 
 bool model_obj::load (const char* filename) {
-
     bool status = true;
     std::string line;
 
@@ -65,153 +89,186 @@ bool model_obj::load (const char* filename) {
     std::ifstream objFile (filename);
     if (objFile.is_open ()) // If obj file is open, continue
     {
-        objFile.seekg (0, std::ios::end); // Go to end of the file,
-        long fileSize = objFile.tellg (); // get file size
-        objFile.seekg (0, std::ios::beg); // we'll use this to register
-                                          // memory for our 3d model
-
-        vertexBuffer =
-        (float*)malloc (fileSize); // Allocate memory for the verteces
-        Faces_Triangles = (float*)malloc (
-        fileSize * sizeof (float)); // Allocate memory for the triangles
-        normals = (float*)malloc (
-        fileSize * sizeof (float)); // Allocate memory for the normals
-
-        int triangle_index = 0; // Set triangle index to zero
-        int normal_index   = 0; // Set normal index to zero
-
-        while (!objFile.eof ()) {
+        while ((!objFile.eof ()) && status) {
             getline (objFile, line);
-
-            if (line.c_str ()[0] == 'v') // geometry: vertex
-            {
-                line[0] = ' '; // Set first character to 0. This will allow us
-                               // to use sscanf
-
-                sscanf (line.c_str (),
-                "%f %f %f ", // Read floats from the line: v X Y Z
-                &vertexBuffer[TotalConnectedPoints],
-                &vertexBuffer[TotalConnectedPoints + 1],
-                &vertexBuffer[TotalConnectedPoints + 2]);
-
-                TotalConnectedPoints +=
-                POINTS_PER_VERTEX; // Add 3 to the total connected points
-            }
-            if (line.c_str ()[0] == 'f') // geometry: face
-            {
-                line[0] = ' '; // Set first character to 0. This will allow us
-                               // to use sscanf
-
-
-                unsigned int vertexIndex[4]  = { 0 };
-                unsigned int textureIndex[4] = { 0 };
-                unsigned int normalIndex[4]  = { 0 };
-                int matches;
-                matches = sscanf (line.c_str (),
-                "%i%i%i", // Read integers from the line:  f x y z
-                &vertexIndex[0], &vertexIndex[1], &vertexIndex[2]);
-                if (matches != POINTS_PER_VERTEX) { // other format
-                    matches =
-                    sscanf (line.c_str (), "%d/%d/%d %d/%d/%d %d/%d/%d\n",
-                    &vertexIndex[0], &textureIndex[0], &normalIndex[0],
-                    &vertexIndex[1], &textureIndex[1], &normalIndex[1],
-                    &vertexIndex[2], &textureIndex[2], &normalIndex[2]);
-                    if (matches != POINTS_PER_VERTEX * 3) { // other format
-                        matches =
-                        sscanf (line.c_str (), "%d//%d %d//%d %d//%d\n",
-                        &vertexIndex[0], &normalIndex[0], &vertexIndex[1],
-                        &normalIndex[1], &vertexIndex[2], &normalIndex[2]);
-                        if (matches != POINTS_PER_VERTEX * 2) {
-                            matches = sscanf (line.c_str (), "%d %d %d %d\n",
-                            &vertexIndex[0], &vertexIndex[1], &vertexIndex[2],
-                            &vertexIndex[3]);
-                            if (matches != POINTS_PER_VERTEX * 4) {
-                                status = false;
-                            }
-                        }
-                    }
-                }
-
-                vertexIndex[0] -= 1; // OBJ file starts counting from 1
-                vertexIndex[1] -= 1; // OBJ file starts counting from 1
-                vertexIndex[2] -= 1; // OBJ file starts counting from 1
-
-
-                /********************************************************************
-                 * Create triangles (f 1 2 3) from points: (v X Y Z) (v X Y
-                 * Z)
-                 * (v X Y Z).
-                 * The vertexBuffer contains all verteces
-                 * The triangles will be created using the verteces we read
-                 * previously
-                 */
-
-                int tCounter = 0;
-                for (int i = 0; i < POINTS_PER_VERTEX; i++) {
-                    Faces_Triangles[triangle_index + tCounter] =
-                    vertexBuffer[3 * vertexIndex[i]];
-                    Faces_Triangles[triangle_index + tCounter + 1] =
-                    vertexBuffer[3 * vertexIndex[i] + 1];
-                    Faces_Triangles[triangle_index + tCounter + 2] =
-                    vertexBuffer[3 * vertexIndex[i] + 2];
-                    tCounter += POINTS_PER_VERTEX;
-                }
-
-                /*********************************************************************
-                 * Calculate all normals, used for lighting
-                 */
-                float coord1[3] = { Faces_Triangles[triangle_index],
-                    Faces_Triangles[triangle_index + 1],
-                    Faces_Triangles[triangle_index + 2] };
-                float coord2[3] = { Faces_Triangles[triangle_index + 3],
-                    Faces_Triangles[triangle_index + 4],
-                    Faces_Triangles[triangle_index + 5] };
-                float coord3[3] = { Faces_Triangles[triangle_index + 6],
-                    Faces_Triangles[triangle_index + 7],
-                    Faces_Triangles[triangle_index + 8] };
-                float norm[3];
-                calculate_normal (norm, coord1, coord2, coord3);
-
-                tCounter = 0;
-                for (int i = 0; i < POINTS_PER_VERTEX; i++) {
-                    normals[normal_index + tCounter]     = norm[0];
-                    normals[normal_index + tCounter + 1] = norm[1];
-                    normals[normal_index + tCounter + 2] = norm[2];
-                    tCounter += POINTS_PER_VERTEX;
-                }
-
-                triangle_index += TOTAL_FLOATS_IN_TRIANGLE;
-                normal_index += TOTAL_FLOATS_IN_TRIANGLE;
-                TotalConnectedTriangles += TOTAL_FLOATS_IN_TRIANGLE;
-            }
+            status = parse_line (line);
         }
         objFile.close (); // Close OBJ file
     } else {
         status = false;
     }
-
     calculate_scale ();
+
 
     return status;
 }
 
-void model_obj::release () {
-    _is_loaded = false;
-    free (Faces_Triangles);
-    free (normals);
-    free (vertexBuffer);
+bool model_obj::parse_line (std::string line) {
+    bool status = true;
+    if (line[0] == 'v') {
+        status = parse_vertex (line);
+    } else if (line[0] == 'f') {
+        status = parse_face (line);
+    }
+    return status;
 }
 
-void model_obj::draw () {
-    glEnableClientState (GL_VERTEX_ARRAY); // Enable vertex arrays
-    glEnableClientState (GL_NORMAL_ARRAY); // Enable normal arrays
-    glVertexPointer (
-    3, GL_FLOAT, 0, Faces_Triangles);       // Vertex Pointer to triangle array
-    glNormalPointer (GL_FLOAT, 0, normals); // Normal pointer to normal array
-    glScalef (
-    _scale_factor, _scale_factor, _scale_factor); // scale to fit in screen
-    glDrawArrays (
-    GL_TRIANGLES, 0, TotalConnectedTriangles); // Draw the triangles
-    glDisableClientState (GL_VERTEX_ARRAY);    // Disable vertex arrays
-    glDisableClientState (GL_NORMAL_ARRAY);    // Disable normal arrays
+bool model_obj::parse_vertex (std::string line) {
+    bool status = true; // TODO: check status
+    float x, y, z;
+
+    line[0] = ' ';
+    sscanf (line.c_str (), "%f %f %f", &x, &y, &z);
+
+    _vertices.push_back (x);
+    _vertices.push_back (y);
+    _vertices.push_back (z);
+
+    return status;
+}
+
+bool model_obj::parse_face (std::string line) {
+    bool status  = true;
+    bool is_quad = false;
+    int v[4]     = { 0 }; // vertex indices
+    int t[4]     = { 0 }; // texture point indices
+    int n[4]     = { 0 }; // normal indices
+    int matches;
+
+    line[0] = ' '; // Set first character to 0. This will allow us
+                   // to use sscanf
+
+    matches = sscanf (line.c_str (), "%d %d %d", &v[0], &v[1], &v[2]);
+
+    if (matches != 3) { // other format
+        matches = sscanf (line.c_str (), "%d/%d/%d %d/%d/%d %d/%d/%d\n", &v[0],
+        &t[0], &n[0], &v[1], &t[1], &n[1], &v[2], &t[2], &n[2]);
+
+        if (matches != 9) { // other format
+            matches = sscanf (line.c_str (), "%d//%d %d//%d %d//%d\n", &v[0],
+            &n[0], &v[1], &n[1], &v[2], &n[2]);
+
+            if (matches != 6) {
+                matches =
+                sscanf (line.c_str (), "%d %d %d %d\n", &v[0], &v[1], &v[2], &v[3]);
+                is_quad = true;
+
+                if (matches != 4) {
+                    status = false;
+                }
+            }
+        }
+    }
+
+    // OBJ file starts counting from 1, and every vertex consists of 3 floats
+    v[0] = (v[0] - 1) * 3;
+    v[1] = (v[1] - 1) * 3;
+    v[2] = (v[2] - 1) * 3;
+    v[3] = (v[3] - 1) * 3;
+    t[0] = (t[0] - 1) * 3;
+    t[1] = (t[1] - 1) * 3;
+    t[2] = (t[2] - 1) * 3;
+    t[3] = (t[3] - 1) * 3;
+    n[0] = (n[0] - 1) * 3;
+    n[1] = (n[1] - 1) * 3;
+    n[2] = (n[2] - 1) * 3;
+    n[3] = (n[3] - 1) * 3;
+
+    float coord_a[3], coord_b[3], coord_c[3], coord_d[3];
+    coord_a[0] = _vertices[v[0]];
+    coord_a[1] = _vertices[v[0] + 1];
+    coord_a[2] = _vertices[v[0] + 2];
+    coord_b[0] = _vertices[v[1]];
+    coord_b[1] = _vertices[v[1] + 1];
+    coord_b[2] = _vertices[v[1] + 2];
+    coord_c[0] = _vertices[v[2]];
+    coord_c[1] = _vertices[v[2] + 1];
+    coord_c[2] = _vertices[v[2] + 2];
+    if (is_quad) {
+        coord_d[0] = _vertices[v[3]];
+        coord_d[1] = _vertices[v[3] + 1];
+        coord_d[2] = _vertices[v[3] + 2];
+    }
+    /********************************************************************
+     * Create triangles (f 1 2 3) from points: (v X Y Z) (v X Y
+     * Z)
+     * (v X Y Z).
+     * The vertexBuffer contains all verteces
+     * The triangles will be created using the verteces we read
+     * previously
+     */
+
+    if (is_quad) { // its a quad with vertices abcd
+        // first triangle with points abc
+        _faces.push_back (coord_a[0]);
+        _faces.push_back (coord_a[1]);
+        _faces.push_back (coord_a[2]);
+        _faces.push_back (coord_b[0]);
+        _faces.push_back (coord_b[1]);
+        _faces.push_back (coord_b[2]);
+        _faces.push_back (coord_c[0]);
+        _faces.push_back (coord_c[1]);
+        _faces.push_back (coord_c[2]);
+        // second triangle with vertices acd
+        _faces.push_back (coord_a[0]);
+        _faces.push_back (coord_a[1]);
+        _faces.push_back (coord_a[2]);
+        _faces.push_back (coord_c[0]);
+        _faces.push_back (coord_c[1]);
+        _faces.push_back (coord_c[2]);
+        _faces.push_back (coord_d[0]);
+        _faces.push_back (coord_d[1]);
+        _faces.push_back (coord_d[2]);
+
+    } else { // its a triangle with vertices abc
+        _faces.push_back (coord_a[0]);
+        _faces.push_back (coord_a[1]);
+        _faces.push_back (coord_a[2]);
+        _faces.push_back (coord_b[0]);
+        _faces.push_back (coord_b[1]);
+        _faces.push_back (coord_b[2]);
+        _faces.push_back (coord_c[0]);
+        _faces.push_back (coord_c[1]);
+        _faces.push_back (coord_c[2]);
+    }
+
+    /*********************************************************************
+     * Calculate all normals, used for lighting
+     */
+    float norm[3];
+    if (is_quad) {
+        calculate_normal (norm, coord_a, coord_b, coord_c);
+        _normals.push_back (norm[0]);
+        _normals.push_back (norm[1]);
+        _normals.push_back (norm[2]);
+        _normals.push_back (norm[0]);
+        _normals.push_back (norm[1]);
+        _normals.push_back (norm[2]);
+        _normals.push_back (norm[0]);
+        _normals.push_back (norm[1]);
+        _normals.push_back (norm[2]);
+        calculate_normal (norm, coord_a, coord_c, coord_d);
+        _normals.push_back (norm[0]);
+        _normals.push_back (norm[1]);
+        _normals.push_back (norm[2]);
+        _normals.push_back (norm[0]);
+        _normals.push_back (norm[1]);
+        _normals.push_back (norm[2]);
+        _normals.push_back (norm[0]);
+        _normals.push_back (norm[1]);
+        _normals.push_back (norm[2]);
+    } else {
+        calculate_normal (norm, coord_a, coord_b, coord_c);
+        _normals.push_back (norm[0]);
+        _normals.push_back (norm[1]);
+        _normals.push_back (norm[2]);
+        _normals.push_back (norm[0]);
+        _normals.push_back (norm[1]);
+        _normals.push_back (norm[2]);
+        _normals.push_back (norm[0]);
+        _normals.push_back (norm[1]);
+        _normals.push_back (norm[2]);
+    }
+
+    return status;
 }

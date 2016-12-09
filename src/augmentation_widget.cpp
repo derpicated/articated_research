@@ -145,7 +145,7 @@ void augmentation_widget::paintGL () {
     glMultMatrixf (_y_persp_mat);
     glMultMatrixf (_z_persp_mat);
 
-    glColor3f (1, 0, 0); // draw in red
+    glColor3f (1, 0, 0);
     _object.draw ();
 
     glPopMatrix ();

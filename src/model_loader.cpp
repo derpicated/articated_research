@@ -13,7 +13,8 @@
 
 model_obj::model_obj ()
 : _is_loaded (false)
-, _scale_factor (1) {
+, _scale_factor (1)
+, _current_rgba{ 1 } {
 }
 
 void model_obj::release () {
@@ -21,6 +22,10 @@ void model_obj::release () {
     _faces.clear ();
     _normals.clear ();
     _colors.clear ();
+    _current_rgba[0] = 1;
+    _current_rgba[1] = 1;
+    _current_rgba[2] = 1;
+    _current_rgba[3] = 1;
 }
 
 void model_obj::calculate_normal (float* norm, float* coord1, float* coord2, float* coord3) {
@@ -64,7 +69,7 @@ void model_obj::draw () {
 
     glEnableClientState (GL_VERTEX_ARRAY); // Enable vertex arrays
     glEnableClientState (GL_NORMAL_ARRAY); // Enable normal arrays
-    // glEnableClientState (GL_COLOR_ARRAY);  // Enable color arrays
+    glEnableClientState (GL_COLOR_ARRAY);  // Enable color arrays
 
     glScalef (_scale_factor, _scale_factor, _scale_factor);
 
@@ -75,7 +80,7 @@ void model_obj::draw () {
 
     glDisableClientState (GL_VERTEX_ARRAY); // Disable vertex arrays
     glDisableClientState (GL_NORMAL_ARRAY); // Disable normal arrays
-    // glDisableClientState (GL_COLOR_ARRAY);  // Disable color arrays
+    glDisableClientState (GL_COLOR_ARRAY);  // Disable color arrays
 }
 
 bool model_obj::load (const char* filename) {
@@ -97,18 +102,24 @@ bool model_obj::load (const char* filename) {
     } else {
         status = false;
     }
-    calculate_scale ();
 
+    calculate_scale ();
 
     return status;
 }
 
 bool model_obj::parse_line (std::string line) {
     bool status = true;
-    if (line[0] == 'v') {
+    if (line[0] == '#' || iscntrl (line[0]) || isspace (line[0])) {
+        ; // comment line, ignore
+    } else if (line[0] == 'v') {
         status = parse_vertex (line);
     } else if (line[0] == 'f') {
         status = parse_face (line);
+    } else if (line[0] == 'u') {
+        status = parse_usemtl (line); // should be usemtl
+    } else {
+        std::cout << "unsupporterd keyword: " << line << std::endl;
     }
     return status;
 }
@@ -270,5 +281,70 @@ bool model_obj::parse_face (std::string line) {
         _normals.push_back (norm[2]);
     }
 
+    // color array
+
+    if (is_quad) {
+        // color for triangle 1
+        _colors.push_back (_current_rgba[0]);
+        _colors.push_back (_current_rgba[1]);
+        _colors.push_back (_current_rgba[2]);
+        _colors.push_back (_current_rgba[3]);
+        _colors.push_back (_current_rgba[0]);
+        _colors.push_back (_current_rgba[1]);
+        _colors.push_back (_current_rgba[2]);
+        _colors.push_back (_current_rgba[3]);
+        _colors.push_back (_current_rgba[0]);
+        _colors.push_back (_current_rgba[1]);
+        _colors.push_back (_current_rgba[2]);
+        _colors.push_back (_current_rgba[3]);
+        // color for triangle 2
+        _colors.push_back (_current_rgba[0]);
+        _colors.push_back (_current_rgba[1]);
+        _colors.push_back (_current_rgba[2]);
+        _colors.push_back (_current_rgba[3]);
+        _colors.push_back (_current_rgba[0]);
+        _colors.push_back (_current_rgba[1]);
+        _colors.push_back (_current_rgba[2]);
+        _colors.push_back (_current_rgba[3]);
+        _colors.push_back (_current_rgba[0]);
+        _colors.push_back (_current_rgba[1]);
+        _colors.push_back (_current_rgba[2]);
+        _colors.push_back (_current_rgba[3]);
+    } else { // color for triangle
+        _colors.push_back (_current_rgba[0]);
+        _colors.push_back (_current_rgba[1]);
+        _colors.push_back (_current_rgba[2]);
+        _colors.push_back (_current_rgba[3]);
+        _colors.push_back (_current_rgba[0]);
+        _colors.push_back (_current_rgba[1]);
+        _colors.push_back (_current_rgba[2]);
+        _colors.push_back (_current_rgba[3]);
+        _colors.push_back (_current_rgba[0]);
+        _colors.push_back (_current_rgba[1]);
+        _colors.push_back (_current_rgba[2]);
+        _colors.push_back (_current_rgba[3]);
+    }
+
+    return status;
+}
+
+bool model_obj::parse_usemtl (std::string line) {
+    bool status = true; // TODO: check status
+
+    std::string mat = line.substr (line.find (" "));   // get from space
+    mat             = mat.substr (0, line.find (" ")); // truncate from space
+
+    if (mat == "color") {
+        ;
+    } else if (mat == "color1") {
+        ;
+    } else {
+        // default to purple
+        _current_rgba[0] = 0.5;
+        _current_rgba[1] = 0;
+        _current_rgba[2] = 0.5;
+        _current_rgba[3] = 1;
+        std::cout << "unknown material: " << mat << std::endl;
+    }
     return status;
 }

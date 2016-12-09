@@ -17,9 +17,11 @@ class model_obj {
     bool parse_line (std::string line);
     bool parse_vertex (std::string line);
     bool parse_face (std::string line);
+    bool parse_usemtl (std::string line);
 
     bool _is_loaded;
     float _scale_factor;
+    float _current_rgba[4];
     std::vector<float> _vertices;
     std::vector<float> _faces;
     std::vector<float> _normals;

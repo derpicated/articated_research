@@ -1,10 +1,13 @@
 #include "model_loader.hpp"
 
 #include <GL/gl.h>
+#include <algorithm>
+#include <cctype>
 #include <cmath>
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <string>
 #include <string>
 #include <vector>
 
@@ -331,13 +334,44 @@ bool model_obj::parse_face (std::string line) {
 bool model_obj::parse_usemtl (std::string line) {
     bool status = true; // TODO: check status
 
-    std::string mat = line.substr (line.find (" "));   // get from space
-    mat             = mat.substr (0, line.find (" ")); // truncate from space
+    std::string mat = line.substr (line.find (" ")); // get from space
+    mat             = trim_str (mat);
 
-    if (mat == "color") {
-        ;
-    } else if (mat == "color1") {
-        ;
+    if (mat == "black") {
+        _current_rgba[0] = 0;
+        _current_rgba[1] = 0;
+        _current_rgba[2] = 0;
+        _current_rgba[3] = 1;
+    } else if (mat == "glass") {
+        _current_rgba[0] = 0.5;
+        _current_rgba[1] = 0.65;
+        _current_rgba[2] = 0.75;
+        _current_rgba[3] = 1;
+    } else if (mat == "bone") {
+        _current_rgba[0] = 0.75;
+        _current_rgba[1] = 0.75;
+        _current_rgba[2] = 0.65;
+        _current_rgba[3] = 1;
+    } else if (mat == "brass") {
+        _current_rgba[0] = 0.45;
+        _current_rgba[1] = 0.35;
+        _current_rgba[2] = 0.12;
+        _current_rgba[3] = 1;
+    } else if (mat == "dkdkgrey") {
+        _current_rgba[0] = 0.30;
+        _current_rgba[1] = 0.35;
+        _current_rgba[2] = 0.35;
+        _current_rgba[3] = 1;
+    } else if (mat == "fldkdkgrey") {
+        _current_rgba[0] = 0.30;
+        _current_rgba[1] = 0.35;
+        _current_rgba[2] = 0.35;
+        _current_rgba[3] = 1;
+    } else if (mat == "redbrick") {
+        _current_rgba[0] = 0.61;
+        _current_rgba[1] = 0.16;
+        _current_rgba[2] = 0.0;
+        _current_rgba[3] = 1;
     } else {
         // default to purple
         _current_rgba[0] = 0.5;
@@ -347,4 +381,13 @@ bool model_obj::parse_usemtl (std::string line) {
         std::cout << "unknown material: " << mat << std::endl;
     }
     return status;
+}
+
+inline std::string model_obj::trim_str (const std::string& s) {
+    auto wsfront = std::find_if_not (
+    s.begin (), s.end (), [](int c) { return std::isspace (c); });
+    auto wsback = std::find_if_not (s.rbegin (), s.rend (), [](int c) {
+        return std::isspace (c);
+    }).base ();
+    return (wsback <= wsfront ? std::string () : std::string (wsfront, wsback));
 }

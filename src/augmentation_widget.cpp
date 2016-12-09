@@ -84,7 +84,7 @@ void augmentation_widget::initializeGL () {
 
     glClearColor (0, 0, 0, 1.0f);
     glEnable (GL_DEPTH_TEST);
-    glEnable (GL_CULL_FACE);
+    // glEnable (GL_CULL_FACE);
     glShadeModel (GL_SMOOTH);
     glEnable (GL_LIGHTING);
     glEnable (GL_LIGHT0);
@@ -150,7 +150,7 @@ void augmentation_widget::paintGL () {
     glPopMatrix ();
 }
 
-void augmentation_widget::drawObject () {
+/*void augmentation_widget::drawObject () {
     glBegin (GL_QUADS);
     glColor3f (0, 1, 1);
     glNormal3f (0, 0, -1);
@@ -188,4 +188,4 @@ void augmentation_widget::drawObject () {
     glVertex3f (-1, -1, 0);
     glVertex3f (0, 0, 1.2);
     glEnd ();
-}
+}*/

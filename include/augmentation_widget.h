@@ -36,12 +36,6 @@ class augmentation_widget : public QOpenGLWidget, protected QOpenGLFunctions {
     signals:
 
     private:
-    void drawObject ();
-    bool parseObject (const char* path,
-    std::vector<QVector3D>& out_vertices,
-    std::vector<QVector2D>& out_uvs,
-    std::vector<QVector3D>& out_normals);
-
     model_obj _object;
     float _scale_factor;
     float _x_pos;

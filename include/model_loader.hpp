@@ -18,6 +18,7 @@ class model_obj {
     bool parse_vertex (std::string line);
     bool parse_face (std::string line);
     bool parse_usemtl (std::string line);
+    inline std::string trim_str (const std::string& s);
 
     bool _is_loaded;
     float _scale_factor;

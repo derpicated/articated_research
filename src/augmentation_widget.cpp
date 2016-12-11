@@ -43,9 +43,6 @@ bool augmentation_widget::loadObject (std::string path) {
 void augmentation_widget::setBackground (GLvoid* image, GLsizei width, GLsizei height) {
     // create background texture
     glBindTexture (GL_TEXTURE_2D, _texture_background);
-    // TODO: maybe move these to init?
-    glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, image);
 }
 
@@ -84,14 +81,17 @@ void augmentation_widget::initializeGL () {
 
     glClearColor (0, 0, 0, 1.0f);
     glEnable (GL_DEPTH_TEST);
-    // glEnable (GL_CULL_FACE);
+    glEnable (GL_CULL_FACE);
     glShadeModel (GL_SMOOTH);
     glEnable (GL_LIGHTING);
     glEnable (GL_LIGHT0);
+    glEnable (GL_COLOR_MATERIAL);
     glMatrixMode (GL_PROJECTION);
     glEnable (GL_TEXTURE_2D);
     glGenTextures (1, &_texture_background);
-    glEnable (GL_COLOR_MATERIAL);
+    glBindTexture (GL_TEXTURE_2D, _texture_background);
+    glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
     glMatrixMode (GL_MODELVIEW);
     static GLfloat lightPosition[4] = { 0, 0, 10, 1.0 };
@@ -117,8 +117,7 @@ void augmentation_widget::resizeGL (int width, int height) {
 
 void augmentation_widget::paintGL () {
     glMatrixMode (GL_MODELVIEW);
-    // QOpenGLFunctions* f = QOpenGLContext::currentContext ()->functions
-    // ();
+    // QOpenGLFunctions* f = QOpenGLContext::currentContext ()->functions ();
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity ();
 

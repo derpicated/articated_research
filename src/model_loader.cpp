@@ -1,6 +1,11 @@
 #include "model_loader.hpp"
 
+#ifdef OPENGL_ES
+#include <GLES/gl.h>
+#else
 #include <GL/gl.h>
+#endif // OPENGL_ES
+
 #include <algorithm>
 #include <cctype>
 #include <cmath>
@@ -16,7 +21,7 @@
 
 model_obj::model_obj ()
 : _is_loaded (false)
-, _scale_factor (1)
+, _scale_factor (1.0f)
 , _current_rgba{ 1 } {
 }
 
@@ -68,22 +73,24 @@ void model_obj::calculate_scale () {
 }
 
 void model_obj::draw () {
-    GLsizei face_count = _faces.size () / 3; // 3 points per face
+    if (_is_loaded) {
+        GLsizei face_count = _faces.size () / 3; // 3 points per face
 
-    glEnableClientState (GL_VERTEX_ARRAY); // Enable vertex arrays
-    glEnableClientState (GL_NORMAL_ARRAY); // Enable normal arrays
-    glEnableClientState (GL_COLOR_ARRAY);  // Enable color arrays
+        glEnableClientState (GL_VERTEX_ARRAY); // Enable vertex arrays
+        glEnableClientState (GL_NORMAL_ARRAY); // Enable normal arrays
+        glEnableClientState (GL_COLOR_ARRAY);  // Enable color arrays
 
-    glScalef (_scale_factor, _scale_factor, _scale_factor);
+        glScalef (_scale_factor, _scale_factor, _scale_factor);
 
-    glVertexPointer (3, GL_FLOAT, 0, _faces.data ());
-    glNormalPointer (GL_FLOAT, 0, _normals.data ());
-    glColorPointer (4, GL_FLOAT, 0, _colors.data ());
-    glDrawArrays (GL_TRIANGLES, 0, face_count);
+        glVertexPointer (3, GL_FLOAT, 0, _faces.data ());
+        glNormalPointer (GL_FLOAT, 0, _normals.data ());
+        glColorPointer (4, GL_FLOAT, 0, _colors.data ());
+        glDrawArrays (GL_TRIANGLES, 0, face_count);
 
-    glDisableClientState (GL_VERTEX_ARRAY); // Disable vertex arrays
-    glDisableClientState (GL_NORMAL_ARRAY); // Disable normal arrays
-    glDisableClientState (GL_COLOR_ARRAY);  // Disable color arrays
+        glDisableClientState (GL_VERTEX_ARRAY); // Disable vertex arrays
+        glDisableClientState (GL_NORMAL_ARRAY); // Disable normal arrays
+        glDisableClientState (GL_COLOR_ARRAY);  // Disable color arrays
+    }
 }
 
 bool model_obj::load (const char* filename) {
@@ -106,7 +113,11 @@ bool model_obj::load (const char* filename) {
         status = false;
     }
 
-    calculate_scale ();
+
+    if (status == true) {
+        calculate_scale ();
+        _is_loaded = true;
+    }
 
     return status;
 }
@@ -160,14 +171,15 @@ bool model_obj::parse_face (std::string line) {
         matches = sscanf (line.c_str (), "%d %d %d", &v[0], &v[1], &v[2]);
 
         if (matches != 3) { // other format
-            matches = sscanf (line.c_str (), "%d/%d/%d %d/%d/%d %d/%d/%d\n",
-            &v[0], &t[0], &n[0], &v[1], &t[1], &n[1], &v[2], &t[2], &n[2]);
+            matches = sscanf (line.c_str (), "%d//%d %d//%d %d//%d\n", &v[0],
+            &n[0], &v[1], &n[1], &v[2], &n[2]);
 
-            if (matches != 9) { // other format
-                matches = sscanf (line.c_str (), "%d//%d %d//%d %d//%d\n",
-                &v[0], &n[0], &v[1], &n[1], &v[2], &n[2]);
+            if (matches != 6) {
+                matches = sscanf (line.c_str (), "%d/%d/%d %d/%d/%d %d/%d/%d\n",
+                &v[0], &t[0], &n[0], &v[1], &t[1], &n[1], &v[2], &t[2], &n[2]);
 
-                if (matches != 6) {
+                if (matches != 9) { // unsupported format
+
                     status = false;
                 }
             }
@@ -337,7 +349,7 @@ bool model_obj::parse_usemtl (std::string line) {
     std::string mat = line.substr (line.find (" ")); // get from space
     mat             = trim_str (mat);
 
-    if (mat == "black") {
+    if (mat == "black") { // shuttle materials
         _current_rgba[0] = 0;
         _current_rgba[1] = 0;
         _current_rgba[2] = 0;
@@ -372,11 +384,31 @@ bool model_obj::parse_usemtl (std::string line) {
         _current_rgba[1] = 0.16;
         _current_rgba[2] = 0.0;
         _current_rgba[3] = 1;
+    } else if (mat == "Mat_1_-1") { // articated materials
+        _current_rgba[0] = 0.0;
+        _current_rgba[1] = 0.0;
+        _current_rgba[2] = 1.0;
+        _current_rgba[3] = 1.0;
+    } else if (mat == "Mat_2_-1") {
+        _current_rgba[0] = 0.2;
+        _current_rgba[1] = 1.0;
+        _current_rgba[2] = 1.0;
+        _current_rgba[3] = 0.4;
+    } else if (mat == "Mat_3_-1") {
+        _current_rgba[0] = 1.0;
+        _current_rgba[1] = 0.0;
+        _current_rgba[2] = 0.0;
+        _current_rgba[3] = 1.0;
+    } else if (mat == "Mat_4_-1") {
+        _current_rgba[0] = 0.0;
+        _current_rgba[1] = 1.0;
+        _current_rgba[2] = 0.0;
+        _current_rgba[3] = 1.0;
     } else {
-        // default to purple
-        _current_rgba[0] = 0.5;
+        // default to dark purple
+        _current_rgba[0] = 0.2;
         _current_rgba[1] = 0;
-        _current_rgba[2] = 0.5;
+        _current_rgba[2] = 0.2;
         _current_rgba[3] = 1;
         std::cout << "unknown material: " << mat << std::endl;
     }

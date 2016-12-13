@@ -1,8 +1,13 @@
 // augmentation_widget.cpp
 
-#include "augmentation_widget.h"
+#include "augmentation_widget.hpp"
 
+#ifdef OPENGL_ES
+#include <GLES/gl.h>
+#else
 #include <GL/gl.h>
+#endif // OPENGL_ES
+
 #include <QVector2D>
 #include <QVector3D>
 
@@ -79,9 +84,9 @@ void augmentation_widget::setZRotation (const GLfloat persp_mat[16]) {
 void augmentation_widget::initializeGL () {
     initializeOpenGLFunctions ();
 
-    glClearColor (0, 0, 0, 1.0f);
+    glClearColor (1, 0.5, 1, 1.0f);
     glEnable (GL_DEPTH_TEST);
-    glEnable (GL_CULL_FACE);
+    // glEnable (GL_CULL_FACE);
     glShadeModel (GL_SMOOTH);
     glEnable (GL_LIGHTING);
     glEnable (GL_LIGHT0);
@@ -107,11 +112,11 @@ void augmentation_widget::resizeGL (int width, int height) {
 
     glMatrixMode (GL_PROJECTION);
     glLoadIdentity ();
-#ifdef QT_OPENGL_ES_1
+#ifdef OPENGL_ES
     glOrthof (-2, +2, -2, +2, 1.0, 15.0);
 #else
     glOrtho (-2, +2, -2, +2, 1.0, 15.0);
-#endif
+#endif // OPENGL_ES
     glMatrixMode (GL_MODELVIEW);
 }
 
@@ -123,21 +128,10 @@ void augmentation_widget::paintGL () {
 
     // draw background
     glTranslatef (0.0, 0.0, -10.0);
-
-    glBegin (GL_QUADS);
-    glColor3f (1, 1, 1);
-    glTexCoord2f (0.0, 1.0);
-    glVertex3f (-4.0, -3.0, -2.0);
-    glTexCoord2f (1.0, 1.0);
-    glVertex3f (4.0, -3.0, -2.0);
-    glTexCoord2f (1.0, 0.0);
-    glVertex3f (4.0, 3.0, -2.0);
-    glTexCoord2f (0.0, 0.0);
-    glVertex3f (-4.0, 3.0, -2.0);
-    glEnd ();
-
+    draw_background ();
     glPushMatrix ();
 
+    // draw object
     glTranslatef (_x_pos, _y_pos, 0);
     glScalef (_scale_factor, _scale_factor, _scale_factor);
     glMultMatrixf (_x_persp_mat);
@@ -147,6 +141,37 @@ void augmentation_widget::paintGL () {
     _object.draw ();
 
     glPopMatrix ();
+}
+
+void augmentation_widget::draw_background () {
+    GLfloat vertices_buff[6 * 3] = { -4.0, -3.0, -2.0, 4.0, -3.0, -2.0, 4.0,
+        3.0, -2.0, -4.0, -3.0, -2.0, 4.0, 3.0, -2.0, -4.0, 3.0, -2.0 };
+
+    GLfloat normals_buff[6 * 3] = { 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0,
+        0, -1, 0, 0, -1 };
+
+    GLfloat colors_buff[6 * 3] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+
+    GLfloat texture_buff[6 * 2] = { 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0,
+        0.0, 0.0, 0.0 };
+
+    glEnableClientState (GL_VERTEX_ARRAY);
+    glEnableClientState (GL_NORMAL_ARRAY);
+    glEnableClientState (GL_COLOR_ARRAY);
+    glEnableClientState (GL_TEXTURE_COORD_ARRAY);
+
+    glBindTexture (GL_TEXTURE_2D, _texture_background);
+    glVertexPointer (3, GL_FLOAT, 0, vertices_buff);
+    glNormalPointer (GL_FLOAT, 0, normals_buff);
+    glColorPointer (4, GL_FLOAT, 0, colors_buff);
+    glTexCoordPointer (2, GL_FLOAT, 0, texture_buff);
+
+    glDrawArrays (GL_TRIANGLES, 0, 2); // draw the 2 triangles
+
+    glDisableClientState (GL_VERTEX_ARRAY);
+    glDisableClientState (GL_NORMAL_ARRAY);
+    glDisableClientState (GL_COLOR_ARRAY);
+    glDisableClientState (GL_TEXTURE_COORD_ARRAY);
 }
 
 /*void augmentation_widget::drawObject () {

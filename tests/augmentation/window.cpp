@@ -45,7 +45,7 @@ void Window::keyPressEvent (QKeyEvent* e) {
 
 void Window::loadButton_clicked () {
     ui->testWidget->loadObject (
-    std::string (RES_DIR) + std::string ("/shuttle.obj"));
+    std::string (RES_DIR) + std::string ("/articated.obj"));
     ui->testWidget->update ();
 }
 

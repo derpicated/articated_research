@@ -1,6 +1,7 @@
 #ifndef MODEL_OBJ_HPP
 #define MODEL_OBJ_HPP
 
+#include <set>
 #include <string>
 #include <vector>
 
@@ -22,11 +23,12 @@ class model_obj {
 
     bool _is_loaded;
     float _scale_factor;
-    float _current_rgba[4];
+    std::vector<float> _current_rgba;
     std::vector<float> _vertices;
     std::vector<float> _faces;
     std::vector<float> _normals;
     std::vector<float> _colors;
+    std::set<std::string> _unknown_options;
 };
 
 #endif // MODEL_OBJ_HPP

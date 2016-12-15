@@ -93,6 +93,7 @@ void augmentation_widget::initializeGL () {
     glEnable (GL_COLOR_MATERIAL);
     glMatrixMode (GL_PROJECTION);
     glEnable (GL_TEXTURE_2D);
+
     glGenTextures (1, &_texture_background);
     glBindTexture (GL_TEXTURE_2D, _texture_background);
     glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -144,16 +145,34 @@ void augmentation_widget::paintGL () {
 }
 
 void augmentation_widget::draw_background () {
-    GLfloat vertices_buff[6 * 3] = { -4.0, -3.0, -2.0, 4.0, -3.0, -2.0, 4.0,
-        3.0, -2.0, -4.0, -3.0, -2.0, 4.0, 3.0, -2.0, -4.0, 3.0, -2.0 };
+    // clang-format off
+    GLfloat vertices_buff[6 * 3] = {    -4.0, -3.0, -2.0,   // poly 1 a
+                                        4.0, -3.0, -2.0,    // poly 1 b
+                                        4.0, 3.0, -2.0,     // poly 1 c
+                                        -4.0, -3.0, -2.0,   // poly 2 a
+                                        4.0, 3.0, -2.0,     // poly 2 b
+                                        -4.0, 3.0, -2.0 };  // poly 2 c
 
-    GLfloat normals_buff[6 * 3] = { 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0,
-        0, -1, 0, 0, -1 };
+    GLfloat normals_buff[6 * 3] = {     0, 0, 1,           // poly 1 a
+                                        0, 0, 1,           // poly 1 b
+                                        0, 0, 1,           // poly 1 c
+                                        0, 0, 1,           // poly 2 a
+                                        0, 0, 1,           // poly 2 b
+                                        0, 0, 1 };         // poly 2 c
 
-    GLfloat colors_buff[6 * 3] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+    GLfloat texture_buff[6 * 2] = {     0.0, 1.0,           // poly 1 a
+                                        1.0, 1.0,           // poly 1 b
+                                        1.0, 0.0,           // poly 1 c
+                                        0.0, 1.0,           // poly 2 a
+                                        1.0, 0.0,           // poly 2 b
+                                        0.0, 0.0 };         // poly 2 c
 
-    GLfloat texture_buff[6 * 2] = { 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0,
-        0.0, 0.0, 0.0 };
+    GLfloat colors_buff[6 * 4];
+    // clang-format on
+    // all collors white
+    for (int i = 0; i < (6 * 4); i++) {
+        colors_buff[i] = 1.0f;
+    }
 
     glEnableClientState (GL_VERTEX_ARRAY);
     glEnableClientState (GL_NORMAL_ARRAY);
@@ -173,43 +192,3 @@ void augmentation_widget::draw_background () {
     glDisableClientState (GL_COLOR_ARRAY);
     glDisableClientState (GL_TEXTURE_COORD_ARRAY);
 }
-
-/*void augmentation_widget::drawObject () {
-    glBegin (GL_QUADS);
-    glColor3f (0, 1, 1);
-    glNormal3f (0, 0, -1);
-    glVertex3f (-1, -1, 0);
-    glVertex3f (-1, 1, 0);
-    glVertex3f (1, 1, 0);
-    glVertex3f (1, -1, 0);
-    glEnd ();
-
-    glBegin (GL_TRIANGLES);
-    glColor3f (1, 0, 0);
-    glNormal3f (0, -1, 0.707);
-    glVertex3f (-1, -1, 0);
-    glVertex3f (1, -1, 0);
-    glVertex3f (0, 0, 1.2);
-    glEnd ();
-    glBegin (GL_TRIANGLES);
-    glColor3f (0, 1, 0);
-    glNormal3f (1, 0, 0.707);
-    glVertex3f (1, -1, 0);
-    glVertex3f (1, 1, 0);
-    glVertex3f (0, 0, 1.2);
-    glEnd ();
-    glBegin (GL_TRIANGLES);
-    glColor3f (0, 0, 1);
-    glNormal3f (0, 1, 0.707);
-    glVertex3f (1, 1, 0);
-    glVertex3f (-1, 1, 0);
-    glVertex3f (0, 0, 1.2);
-    glEnd ();
-    glBegin (GL_TRIANGLES);
-    glColor3f (1, 1, 0);
-    glNormal3f (-1, 0, 0.707);
-    glVertex3f (-1, 1, 0);
-    glVertex3f (-1, -1, 0);
-    glVertex3f (0, 0, 1.2);
-    glEnd ();
-}*/

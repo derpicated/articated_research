@@ -22,7 +22,7 @@
 model_obj::model_obj ()
 : _is_loaded (false)
 , _scale_factor (1.0f)
-, _current_rgba{ 1 } {
+, _current_rgba{ 1, 1, 1, 1 } {
 }
 
 void model_obj::release () {
@@ -30,10 +30,7 @@ void model_obj::release () {
     _faces.clear ();
     _normals.clear ();
     _colors.clear ();
-    _current_rgba[0] = 1;
-    _current_rgba[1] = 1;
-    _current_rgba[2] = 1;
-    _current_rgba[3] = 1;
+    _current_rgba = { 1, 1, 1, 1 };
 }
 
 void model_obj::calculate_normal (float* norm, float* coord1, float* coord2, float* coord3) {
@@ -62,9 +59,9 @@ void model_obj::calculate_normal (float* norm, float* coord1, float* coord2, flo
 
 void model_obj::calculate_scale () {
     // ensure that every vertex fits into range -1 to 1
-    float max_val = 0;
+    float max_val = 0.0f;
     for (float val : _vertices) {
-        float abs_val = fabs (val);
+        float abs_val = std::fabs (val);
         if (max_val < abs_val) {
             max_val = abs_val;
         }
@@ -106,7 +103,9 @@ bool model_obj::load (const char* filename) {
     {
         while ((!objFile.eof ()) && status) {
             getline (objFile, line);
-            status = parse_line (line);
+            if (!line.empty ()) {
+                status = parse_line (line);
+            }
         }
         objFile.close (); // Close OBJ file
     } else {
@@ -124,35 +123,44 @@ bool model_obj::load (const char* filename) {
 
 bool model_obj::parse_line (std::string line) {
     bool status = true;
-    if (line[0] == '#' || iscntrl (line[0]) || isspace (line[0])) {
+
+    size_t split_pos    = line.find (' ');
+    std::string keyword = line.substr (0, split_pos);
+    std::string value   = line.substr (split_pos);
+
+    if (keyword == "#" || keyword.empty ()) {
         ; // comment line, ignore
-    } else if (line[0] == 'v') {
-        status = parse_vertex (line);
-    } else if (line[0] == 'f') {
-        status = parse_face (line);
-    } else if (line[0] == 'u') {
-        status = parse_usemtl (line); // should be usemtl
+    } else if (keyword == "v") {
+        status = parse_vertex (value);
+    } else if (keyword == "f") {
+        status = parse_face (value);
+    } else if (keyword == "usemtl") {
+        status = parse_usemtl (value); // should be usemtl
     } else {
-        std::cout << "unsupporterd keyword: " << line << std::endl;
+        if (_unknown_options.find (keyword) == _unknown_options.end ()) {
+            std::cout << "unsupporterd keyword: " << keyword << std::endl;
+            _unknown_options.insert (keyword);
+        }
     }
     return status;
 }
 
-bool model_obj::parse_vertex (std::string line) {
+bool model_obj::parse_vertex (std::string value) {
     bool status = true; // TODO: check status
     float x, y, z;
 
-    line[0] = ' ';
-    sscanf (line.c_str (), "%f %f %f", &x, &y, &z);
-
-    _vertices.push_back (x);
-    _vertices.push_back (y);
-    _vertices.push_back (z);
-
+    int matches = sscanf (value.c_str (), " %f %f %f", &x, &y, &z);
+    if (matches == 3) {
+        _vertices.push_back (x);
+        _vertices.push_back (y);
+        _vertices.push_back (z);
+    } else {
+        status = false;
+    }
     return status;
 }
 
-bool model_obj::parse_face (std::string line) {
+bool model_obj::parse_face (std::string value) {
     bool status  = true;
     bool is_quad = false;
     int v[4]     = { 0 }; // vertex indices
@@ -160,26 +168,22 @@ bool model_obj::parse_face (std::string line) {
     int n[4]     = { 0 }; // normal indices
     int matches;
 
-    line[0] = ' '; // Set first character to 0. This will allow us
-                   // to use sscanf
-
-
-    matches = sscanf (line.c_str (), "%d %d %d %d\n", &v[0], &v[1], &v[2], &v[3]);
+    matches = sscanf (value.c_str (), "%d %d %d %d\n", &v[0], &v[1], &v[2], &v[3]);
     if (matches == 4) {
         is_quad = true;
     } else {
-        matches = sscanf (line.c_str (), "%d %d %d", &v[0], &v[1], &v[2]);
+        matches = sscanf (value.c_str (), "%d %d %d", &v[0], &v[1], &v[2]);
 
         if (matches != 3) { // other format
-            matches = sscanf (line.c_str (), "%d//%d %d//%d %d//%d\n", &v[0],
+            matches = sscanf (value.c_str (), "%d//%d %d//%d %d//%d\n", &v[0],
             &n[0], &v[1], &n[1], &v[2], &n[2]);
 
             if (matches != 6) {
-                matches = sscanf (line.c_str (), "%d/%d/%d %d/%d/%d %d/%d/%d\n",
-                &v[0], &t[0], &n[0], &v[1], &t[1], &n[1], &v[2], &t[2], &n[2]);
+                matches =
+                sscanf (value.c_str (), "%d/%d/%d %d/%d/%d %d/%d/%d\n", &v[0],
+                &t[0], &n[0], &v[1], &t[1], &n[1], &v[2], &t[2], &n[2]);
 
                 if (matches != 9) { // unsupported format
-
                     status = false;
                 }
             }
@@ -296,121 +300,81 @@ bool model_obj::parse_face (std::string line) {
         _normals.push_back (norm[2]);
     }
 
-    // color array
+    // add colors for each vertex
 
     if (is_quad) {
         // color for triangle 1
-        _colors.push_back (_current_rgba[0]);
-        _colors.push_back (_current_rgba[1]);
-        _colors.push_back (_current_rgba[2]);
-        _colors.push_back (_current_rgba[3]);
-        _colors.push_back (_current_rgba[0]);
-        _colors.push_back (_current_rgba[1]);
-        _colors.push_back (_current_rgba[2]);
-        _colors.push_back (_current_rgba[3]);
-        _colors.push_back (_current_rgba[0]);
-        _colors.push_back (_current_rgba[1]);
-        _colors.push_back (_current_rgba[2]);
-        _colors.push_back (_current_rgba[3]);
+        _colors.insert (std::end (_colors), std::begin (_current_rgba),
+        std::end (_current_rgba));
+        _colors.insert (std::end (_colors), std::begin (_current_rgba),
+        std::end (_current_rgba));
+        _colors.insert (std::end (_colors), std::begin (_current_rgba),
+        std::end (_current_rgba));
         // color for triangle 2
-        _colors.push_back (_current_rgba[0]);
-        _colors.push_back (_current_rgba[1]);
-        _colors.push_back (_current_rgba[2]);
-        _colors.push_back (_current_rgba[3]);
-        _colors.push_back (_current_rgba[0]);
-        _colors.push_back (_current_rgba[1]);
-        _colors.push_back (_current_rgba[2]);
-        _colors.push_back (_current_rgba[3]);
-        _colors.push_back (_current_rgba[0]);
-        _colors.push_back (_current_rgba[1]);
-        _colors.push_back (_current_rgba[2]);
-        _colors.push_back (_current_rgba[3]);
+        _colors.insert (std::end (_colors), std::begin (_current_rgba),
+        std::end (_current_rgba));
+        _colors.insert (std::end (_colors), std::begin (_current_rgba),
+        std::end (_current_rgba));
+        _colors.insert (std::end (_colors), std::begin (_current_rgba),
+        std::end (_current_rgba));
     } else { // color for triangle
-        _colors.push_back (_current_rgba[0]);
-        _colors.push_back (_current_rgba[1]);
-        _colors.push_back (_current_rgba[2]);
-        _colors.push_back (_current_rgba[3]);
-        _colors.push_back (_current_rgba[0]);
-        _colors.push_back (_current_rgba[1]);
-        _colors.push_back (_current_rgba[2]);
-        _colors.push_back (_current_rgba[3]);
-        _colors.push_back (_current_rgba[0]);
-        _colors.push_back (_current_rgba[1]);
-        _colors.push_back (_current_rgba[2]);
-        _colors.push_back (_current_rgba[3]);
+        _colors.insert (std::end (_colors), std::begin (_current_rgba),
+        std::end (_current_rgba));
+        _colors.insert (std::end (_colors), std::begin (_current_rgba),
+        std::end (_current_rgba));
+        _colors.insert (std::end (_colors), std::begin (_current_rgba),
+        std::end (_current_rgba));
     }
 
     return status;
 }
 
-bool model_obj::parse_usemtl (std::string line) {
+bool model_obj::parse_usemtl (std::string value) {
     bool status = true; // TODO: check status
 
-    std::string mat = line.substr (line.find (" ")); // get from space
+    std::string mat = value.substr (value.find (" ")); // get from space
     mat             = trim_str (mat);
 
     if (mat == "black") { // shuttle materials
-        _current_rgba[0] = 0;
-        _current_rgba[1] = 0;
-        _current_rgba[2] = 0;
-        _current_rgba[3] = 1;
+        _current_rgba = { 0.0, 0.0, 0.0, 1.0 };
     } else if (mat == "glass") {
-        _current_rgba[0] = 0.5;
-        _current_rgba[1] = 0.65;
-        _current_rgba[2] = 0.75;
-        _current_rgba[3] = 1;
+        _current_rgba = { 0.5, 0.65, 0.75, 1.0 };
     } else if (mat == "bone") {
-        _current_rgba[0] = 0.75;
-        _current_rgba[1] = 0.75;
-        _current_rgba[2] = 0.65;
-        _current_rgba[3] = 1;
+        _current_rgba = { 0.75, 0.75, 0.65, 1.0 };
     } else if (mat == "brass") {
-        _current_rgba[0] = 0.45;
-        _current_rgba[1] = 0.35;
-        _current_rgba[2] = 0.12;
-        _current_rgba[3] = 1;
+        _current_rgba = { 0.45, 0.35, 0.12, 1.0 };
     } else if (mat == "dkdkgrey") {
-        _current_rgba[0] = 0.30;
-        _current_rgba[1] = 0.35;
-        _current_rgba[2] = 0.35;
-        _current_rgba[3] = 1;
+        _current_rgba = { 0.30, 0.35, 0.35, 1.0 };
     } else if (mat == "fldkdkgrey") {
-        _current_rgba[0] = 0.30;
-        _current_rgba[1] = 0.35;
-        _current_rgba[2] = 0.35;
-        _current_rgba[3] = 1;
+        _current_rgba = { 0.30, 0.35, 0.35, 1.0 };
     } else if (mat == "redbrick") {
-        _current_rgba[0] = 0.61;
-        _current_rgba[1] = 0.16;
-        _current_rgba[2] = 0.0;
-        _current_rgba[3] = 1;
+        _current_rgba = { 0.61, 0.16, 0.0, 1.0 };
     } else if (mat == "Mat_1_-1") { // articated materials
-        _current_rgba[0] = 0.0;
-        _current_rgba[1] = 0.0;
-        _current_rgba[2] = 1.0;
-        _current_rgba[3] = 1.0;
+        _current_rgba = { 0.0, 0.0, 1.0, 1.0 };
     } else if (mat == "Mat_2_-1") {
-        _current_rgba[0] = 0.2;
-        _current_rgba[1] = 1.0;
-        _current_rgba[2] = 1.0;
-        _current_rgba[3] = 0.4;
+        _current_rgba = { 0.2, 1.0, 1.0, 0.4 };
     } else if (mat == "Mat_3_-1") {
-        _current_rgba[0] = 1.0;
-        _current_rgba[1] = 0.0;
-        _current_rgba[2] = 0.0;
-        _current_rgba[3] = 1.0;
+        _current_rgba = { 1.0, 0.0, 0.0, 1.0 };
     } else if (mat == "Mat_4_-1") {
-        _current_rgba[0] = 0.0;
-        _current_rgba[1] = 1.0;
-        _current_rgba[2] = 0.0;
-        _current_rgba[3] = 1.0;
+        _current_rgba = { 0.0, 1.0, 0.0, 1.0 };
+    } else if (mat == "red") { // general collors
+        _current_rgba = { 1.0, 0.0, 0.0, 1.0 };
+    } else if (mat == "green") {
+        _current_rgba = { 0.0, 1.0, 0.0, 1.0 };
+    } else if (mat == "blue") {
+        _current_rgba = { 0.0, 0.0, 1.0, 1.0 };
+    } else if (mat == "cyan") {
+        _current_rgba = { 0.0, 1.0, 1.0, 1.0 };
+    } else if (mat == "yellow") {
+        _current_rgba = { 1.0, 1.0, 0.0, 1.0 };
     } else {
         // default to dark purple
-        _current_rgba[0] = 0.2;
-        _current_rgba[1] = 0;
-        _current_rgba[2] = 0.2;
-        _current_rgba[3] = 1;
-        std::cout << "unknown material: " << mat << std::endl;
+        _current_rgba = { 0.2, 0, 0.2, 1 };
+
+        if (_unknown_options.find (mat) == _unknown_options.end ()) {
+            std::cout << "unknown material: " << mat << std::endl;
+            _unknown_options.insert (mat);
+        }
     }
     return status;
 }

@@ -1,10 +1,10 @@
 // window.cpp
+#include <QFileDialog>
 #include <math.h>
 
+#include "augmentation_widget.h"
 #include "ui_window.h"
 #include "window.h"
-
-#include "augmentation_widget.h"
 
 #ifndef RES_DIR
 #define RES_DIR ""
@@ -44,9 +44,13 @@ void Window::keyPressEvent (QKeyEvent* e) {
 }
 
 void Window::loadButton_clicked () {
-    ui->testWidget->loadObject (
-    std::string (RES_DIR) + std::string ("/articated.obj"));
-    ui->testWidget->update ();
+    QString file_name = QFileDialog::getOpenFileName (
+    this, tr ("Open Video"), RES_DIR, tr ("3D Models (*.obj)"));
+
+    if (!file_name.isEmpty ()) {
+        ui->testWidget->loadObject (file_name.toStdString ());
+        ui->testWidget->update ();
+    }
 }
 
 void Window::scaleSlider_valueChanged (int new_value) {

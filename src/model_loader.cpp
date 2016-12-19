@@ -26,11 +26,13 @@ model_obj::model_obj ()
 }
 
 void model_obj::release () {
-    _is_loaded = false;
+    _is_loaded    = false;
+    _scale_factor = 1.0f;
+    _vertices.clear ();
+    _normals.clear ();
     _faces.clear ();
     _faces_normals.clear ();
     _faces_colors.clear ();
-    _normals.clear ();
     _current_rgba = { 1, 1, 1, 1 };
 }
 
@@ -77,19 +79,19 @@ void model_obj::draw () {
         GLsizei face_count = _faces.size () / 3; // 3 points per face
 
         glEnableClientState (GL_VERTEX_ARRAY); // Enable vertex arrays
-        // glEnableClientState (GL_NORMAL_ARRAY); // Enable normal arrays
-        glEnableClientState (GL_COLOR_ARRAY); // Enable color arrays
+        glEnableClientState (GL_NORMAL_ARRAY); // Enable normal arrays
+        glEnableClientState (GL_COLOR_ARRAY);  // Enable color arrays
 
         glScalef (_scale_factor, _scale_factor, _scale_factor);
 
         glVertexPointer (3, GL_FLOAT, 0, _faces.data ());
-        // glNormalPointer (GL_FLOAT, 0, _faces_normals.data ());
+        glNormalPointer (GL_FLOAT, 0, _faces_normals.data ());
         glColorPointer (4, GL_FLOAT, 0, _faces_colors.data ());
         glDrawArrays (GL_TRIANGLES, 0, face_count);
 
         glDisableClientState (GL_VERTEX_ARRAY); // Disable vertex arrays
-        // glDisableClientState (GL_NORMAL_ARRAY); // Disable normal arrays
-        glDisableClientState (GL_COLOR_ARRAY); // Disable color arrays
+        glDisableClientState (GL_NORMAL_ARRAY); // Disable normal arrays
+        glDisableClientState (GL_COLOR_ARRAY);  // Disable color arrays
     }
 }
 
@@ -128,9 +130,16 @@ bool model_obj::load (const char* filename) {
 bool model_obj::parse_line (const std::string& line) {
     bool status = true;
 
-    size_t split_pos    = line.find (' ');
-    std::string keyword = line.substr (0, split_pos);
-    std::string value   = line.substr (split_pos);
+    std::string value;
+    std::string keyword;
+    size_t split_pos = line.find (' ');
+    if (split_pos != std::string::npos) {
+        keyword = line.substr (0, split_pos);
+        value   = line.substr (split_pos);
+    } else {
+        keyword = line;
+        value   = "";
+    }
 
     if (keyword == "#" || keyword.empty ()) {
         ; // comment line, ignore
@@ -165,6 +174,7 @@ bool model_obj::parse_vertex (const std::string& line) {
             vertex[2] = std::stof (values[2]);
         } catch (std::invalid_argument) {
             status = false;
+            std::cout << "failed line" << line << std::endl;
         }
         if (status == true) {
             _vertices.insert (std::end (_vertices), std::begin (vertex), std::end (vertex));
@@ -189,9 +199,10 @@ bool model_obj::parse_normal (const std::string& line) {
             normal[2] = std::stof (values[2]);
         } catch (std::invalid_argument) {
             status = false;
+            std::cout << "failed line" << line << std::endl;
         }
         if (status == true) {
-            _normals.insert (std::end (_vertices), std::begin (normal), std::end (normal));
+            _normals.insert (std::end (_normals), std::begin (normal), std::end (normal));
         }
     } else {
         status = false;
@@ -207,13 +218,15 @@ bool model_obj::parse_face (const std::string& line) {
 
     if (values.size () == 3) {
         // create triangle ABC
-        parse_triangle (values);
+        status = parse_triangle (values);
     } else if (values.size () == 4) {
         // create triangles ABC and ACD from quad ABCD
         std::vector<std::string> triangle_2 = { values[0], values[2], values[3] };
         values.pop_back ();
-        parse_triangle (values);     // ABC
-        parse_triangle (triangle_2); // ACD
+        status = parse_triangle (values); // ABC
+        if (status == true) {
+            status = parse_triangle (triangle_2); // ACD
+        }
     } else {
         status = false;
     }
@@ -232,42 +245,47 @@ bool model_obj::parse_triangle (const std::vector<std::string>& vertices_str) {
         // TODO: use regex instead
         std::vector<std::string> values = tokenize_str (vertex_str, "/");
         vert_idx                        = std::stoi (values[0]);
+
         if (values.size () == 2) {
-            norm_idx = std::stoi (values[0]);
+            norm_idx = std::stoi (values[1]);
         } else if (values.size () == 3) {
             text_idx = std::stoi (values[1]);
             norm_idx = std::stoi (values[2]);
+        } else {
+            status = false;
         }
 
-        // OBJ index starts at 1, and 3 floats per vertex
-        vert_idx = (vert_idx - 1) * 3;
-        text_idx = (text_idx - 1) * 3;
-        norm_idx = (norm_idx - 1) * 3;
+        if (status) {
+            // OBJ index starts at 1, and 3 floats per vertex
+            vert_idx = (vert_idx - 1) * 3;
+            text_idx = (text_idx - 1) * 3;
+            norm_idx = (norm_idx - 1) * 3;
 
-        // retrieve the XYZ coords
-        std::array<float, 3> vertex;
-        vertex[0] = _vertices[vert_idx];
-        vertex[1] = _vertices[vert_idx + 1];
-        vertex[2] = _vertices[vert_idx + 2];
+            // retrieve the XYZ coords
+            std::array<float, 3> vertex;
+            vertex[0] = _vertices.at (vert_idx);
+            vertex[1] = _vertices.at (vert_idx + 1);
+            vertex[2] = _vertices.at (vert_idx + 2);
 
-        // retrieve the XYZ angles
-        std::array<float, 3> normal;
-        normal[0] = _normals[norm_idx];
-        normal[1] = _normals[norm_idx + 1];
-        normal[2] = _normals[norm_idx + 2];
+            // retrieve the XYZ angles
+            std::array<float, 3> normal;
+            normal[0] = _normals.at (norm_idx);
+            normal[1] = _normals.at (norm_idx + 1);
+            normal[2] = _normals.at (norm_idx + 2);
 
-        // vertex
-        _faces.insert (std::end (_faces), std::begin (vertex), std::end (vertex));
+            // vertex
+            _faces.insert (std::end (_faces), std::begin (vertex), std::end (vertex));
 
-        // normal
-        _faces_normals.insert (
-        std::end (_faces_normals), std::begin (normal), std::end (normal));
+            // normal
+            _faces_normals.insert (
+            std::end (_faces_normals), std::begin (normal), std::end (normal));
 
-        // color
-        _faces_colors.insert (std::end (_faces_colors),
-        std::begin (_current_rgba), std::end (_current_rgba));
+            // color
+            _faces_colors.insert (std::end (_faces_colors),
+            std::begin (_current_rgba), std::end (_current_rgba));
+        }
     }
-    return status; // TODO: use status
+    return status;
 }
 
 bool model_obj::parse_usemtl (const std::string& value) {
@@ -323,8 +341,8 @@ bool model_obj::parse_usemtl (const std::string& value) {
 inline std::vector<std::string>
 model_obj::tokenize_str (const std::string& in, const std::string& delim) {
     size_t split_pos;
-    std::string left = in;
-    std::string right;
+    std::string right = in;
+    std::string left;
     std::vector<std::string> ret;
 
     do {
@@ -339,6 +357,11 @@ model_obj::tokenize_str (const std::string& in, const std::string& delim) {
             }
         }
     } while (split_pos != std::string::npos);
+
+    // the last token
+    if (!right.empty ()) {
+        ret.push_back (right);
+    }
 
     return ret;
 }

@@ -14,7 +14,7 @@ class model_obj {
     void release ();                  // Release the model
 
     private:
-    void calculate_normals ();
+    void calculate_normals (const std::vector<float>& vertices, std::vector<float>& normals);
     void calculate_scale ();
     bool parse_line (const std::string& line);
     bool parse_vertex (const std::string& line);

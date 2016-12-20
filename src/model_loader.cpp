@@ -36,19 +36,19 @@ void model_obj::release () {
     _current_rgba = { 1, 1, 1, 1 };
 }
 
-void model_obj::calculate_normals () {
-    /*
+void model_obj::calculate_normals (const std::vector<float>& vertices,
+std::vector<float>& normals) {
     // calculate Vector1 and Vector2
-    float va[3], vb[3], vr[3], val;
-    va[0] = coord1[0] - coord2[0];
-    va[1] = coord1[1] - coord2[1];
-    va[2] = coord1[2] - coord2[2];
+    float norm[3], va[3], vb[3], vr[3], val;
+    va[0] = vertices[0] - vertices[3];
+    va[1] = vertices[1] - vertices[4];
+    va[2] = vertices[2] - vertices[5];
 
-    vb[0] = coord1[0] - coord3[0];
-    vb[1] = coord1[1] - coord3[1];
-    vb[2] = coord1[2] - coord3[2];
+    vb[0] = vertices[0] - vertices[6];
+    vb[1] = vertices[1] - vertices[7];
+    vb[2] = vertices[2] - vertices[8];
 
-    cross product
+    // cross product
     vr[0] = va[1] * vb[2] - vb[1] * va[2];
     vr[1] = vb[0] * va[2] - va[0] * vb[2];
     vr[2] = va[0] * vb[1] - vb[0] * va[1];
@@ -59,7 +59,19 @@ void model_obj::calculate_normals () {
     norm[0] = vr[0] / val;
     norm[1] = vr[1] / val;
     norm[2] = vr[2] / val;
-    */
+
+    // push back the norms for all 3 vertices
+    normals.push_back (norm[0]);
+    normals.push_back (norm[1]);
+    normals.push_back (norm[2]);
+
+    normals.push_back (norm[0]);
+    normals.push_back (norm[1]);
+    normals.push_back (norm[2]);
+
+    normals.push_back (norm[0]);
+    normals.push_back (norm[1]);
+    normals.push_back (norm[2]);
 }
 
 void model_obj::calculate_scale () {
@@ -119,7 +131,6 @@ bool model_obj::load (const char* filename) {
 
 
     if (status == true) {
-        calculate_normals ();
         calculate_scale ();
         _is_loaded = true;
     }
@@ -235,20 +246,27 @@ bool model_obj::parse_face (const std::string& line) {
 }
 
 bool model_obj::parse_triangle (const std::vector<std::string>& vertices_str) {
-    bool status  = true;
-    int vert_idx = 0; // vertex indices
-    int text_idx = 0; // texture point indices
-    int norm_idx = 0; // normal indices
+    bool status           = true;
+    bool normals_provided = true;
+    int vert_idx          = 0; // vertex indices
+    int text_idx          = 0; // texture point indices
+    int norm_idx          = 0; // normal indices
+    std::vector<float> vertices;
+    std::vector<float> normals;
 
     for (auto vertex_str : vertices_str) {
         // each vertex can be in format v or v//vn or v/vt/vn
         // TODO: use regex instead
         std::vector<std::string> values = tokenize_str (vertex_str, "/");
-        vert_idx                        = std::stoi (values[0]);
 
-        if (values.size () == 2) {
+        if (values.size () == 1) {
+            normals_provided = false;
+            vert_idx         = std::stoi (values[0]);
+        } else if (values.size () == 2) {
+            vert_idx = std::stoi (values[0]);
             norm_idx = std::stoi (values[1]);
         } else if (values.size () == 3) {
+            vert_idx = std::stoi (values[0]);
             text_idx = std::stoi (values[1]);
             norm_idx = std::stoi (values[2]);
         } else {
@@ -262,29 +280,35 @@ bool model_obj::parse_triangle (const std::vector<std::string>& vertices_str) {
             norm_idx = (norm_idx - 1) * 3;
 
             // retrieve the XYZ coords
-            std::array<float, 3> vertex;
-            vertex[0] = _vertices.at (vert_idx);
-            vertex[1] = _vertices.at (vert_idx + 1);
-            vertex[2] = _vertices.at (vert_idx + 2);
+            vertices.push_back (_vertices.at (vert_idx));
+            vertices.push_back (_vertices.at (vert_idx + 1));
+            vertices.push_back (_vertices.at (vert_idx + 2));
 
-            // retrieve the XYZ angles
-            std::array<float, 3> normal;
-            normal[0] = _normals.at (norm_idx);
-            normal[1] = _normals.at (norm_idx + 1);
-            normal[2] = _normals.at (norm_idx + 2);
+            if (normals_provided == true) { // retrieve the XYZ angles
+                normals.push_back (_normals.at (norm_idx));
+                normals.push_back (_normals.at (norm_idx + 1));
+                normals.push_back (_normals.at (norm_idx + 2));
+            }
 
-            // vertex
-            _faces.insert (std::end (_faces), std::begin (vertex), std::end (vertex));
-
-            // normal
-            _faces_normals.insert (
-            std::end (_faces_normals), std::begin (normal), std::end (normal));
-
-            // color
+            // push back color per vertex
             _faces_colors.insert (std::end (_faces_colors),
             std::begin (_current_rgba), std::end (_current_rgba));
         }
     }
+
+    // push back all vertices
+    _faces.insert (std::end (_faces), std::begin (vertices), std::end (vertices));
+
+    // if any of the normals are missing, recalculate all
+    if (normals_provided == false) {
+        normals.clear ();
+        calculate_normals (vertices, normals);
+    }
+
+    // push back all normals
+    _faces_normals.insert (
+    std::end (_faces_normals), std::begin (normals), std::end (normals));
+
     return status;
 }
 
